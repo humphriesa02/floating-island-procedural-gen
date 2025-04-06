@@ -15,12 +15,16 @@ public abstract class SkyIslandLayout : MonoBehaviour
     [SerializeField] private float halfLength;
     [SerializeField] private float halfHeight;
 
-    /* The Center of the Layout */
-    private Vector3 layoutCenter;
+    [Header("Layout Links")]
+    [SerializeField] private SkyIslandLayout previousLayout { get; private set; }
+    [SerializeField] private SkyIslandLayout nextLayout { get; private set; }
 
     [Header("SkyIslands (Generated)")]
     [SerializeField, HideInInspector] private GameObject[] skyIslands;
     public GameObject[] SkyIslands => skyIslands;
+
+    /* The Center of the Layout */
+    private Vector3 layoutCenter;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
