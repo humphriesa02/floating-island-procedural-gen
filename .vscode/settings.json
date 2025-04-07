@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "FloatingIslands.sln"
+    "dotnet.defaultSolution": "floating-island-procedural-gen.sln"
 }
