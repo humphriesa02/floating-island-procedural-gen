@@ -110,6 +110,4 @@ public abstract class SkyIslandLayout : MonoBehaviour
         point.transform.localPosition = localOffset;
         point.transform.localRotation = Quaternion.identity;
     }
-
-
 }
