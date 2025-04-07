@@ -16,8 +16,8 @@ public abstract class SkyIslandLayout : MonoBehaviour
     [SerializeField] private float halfHeight;
 
     [Header("Layout Links")]
-    [SerializeField] private SkyIslandLayout previousLayout { get; private set; }
-    [SerializeField] private SkyIslandLayout nextLayout { get; private set; }
+    [SerializeField] private SkyIslandLayout previousLayout { get; set; }
+    [SerializeField] private SkyIslandLayout nextLayout { get; set; }
 
     [Header("SkyIslands (Generated)")]
     [SerializeField, HideInInspector] private GameObject[] skyIslands;
