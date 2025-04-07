@@ -29,11 +29,13 @@ public abstract class SkyIslandLayout : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        layoutCenter = gameObject.transform.position;
+        
     }
 
     private void Awake()
     {
+        layoutCenter = gameObject.transform.position;
+
         entryPoint.transform.localPosition = new Vector3(0, 0, -halfLength);
         exitPoint.transform.localPosition = new Vector3(0, 0, halfLength);
         leftPoint.transform.localPosition = new Vector3(-halfWidth, 0, 0);
@@ -46,10 +48,21 @@ public abstract class SkyIslandLayout : MonoBehaviour
         
     }
 
-    void OnDrawGizmosSelected()
+    void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(layoutCenter, new Vector3(halfWidth * 2, halfHeight * 2, halfLength * 2));
+
+        // Save the current Gizmos matrix
+        Matrix4x4 oldMatrix = Gizmos.matrix;
+
+        // Set Gizmos matrix to match the object's transform (position + rotation)
+        Gizmos.matrix = transform.localToWorldMatrix;
+
+        // Draw the wire cube at the origin of the transform (local position (0,0,0))
+        Gizmos.DrawWireCube(Vector3.zero, new Vector3(halfWidth * 2, halfHeight * 2, halfLength * 2));
+
+        // Restore the previous matrix
+        Gizmos.matrix = oldMatrix;
 
         Gizmos.color = Color.green;
         if (entryPoint) Gizmos.DrawSphere(entryPoint.transform.position, 0.5f);

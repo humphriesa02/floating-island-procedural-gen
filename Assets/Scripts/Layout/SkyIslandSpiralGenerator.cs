@@ -9,10 +9,11 @@ public class SkyIslandSpiralGenerator : MonoBehaviour
 
     [Header("Spiral Settings")]
     [SerializeField] private int numRepetitions = 10;
-    [SerializeField] private float verticalStep = 30f;
-    [SerializeField] private float angleStepDegrees = 45f;
+    [SerializeField] private float angleStepCoilDegrees = 45f;
+    [SerializeField] private float angleEvelationAngle = 22.5f;
 
     private SkyIslandLayout prevLayout;
+    private float accumulatedCoilAngle = 0.0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -55,15 +56,15 @@ public class SkyIslandSpiralGenerator : MonoBehaviour
                 else
                 {
                     //Spiral Up
-                    Vector3 upwardOffset = Vector3.up * verticalStep;
-                    layout.transform.position = prevLayout.getExitPoint().transform.position + upwardOffset;
+                    layout.transform.position = prevLayout.getExitPoint().transform.position;
 
                     //Allign Entry and Exit
                     AlignLayouts(layout, prevLayout);
 
                     //Spiral Around
-                    layout.transform.RotateAround(prevLayout.getExitPoint().transform.position, Vector3.up, angleStepDegrees);
-                    layout.transform.RotateAround(prevLayout.getExitPoint().transform.position, prevLayout.getExitPoint().transform.right, angleStepDegrees / 2.0f);
+                    layout.transform.RotateAround(prevLayout.getExitPoint().transform.position, Vector3.up, accumulatedCoilAngle);
+                    layout.transform.RotateAround(prevLayout.getExitPoint().transform.position, prevLayout.getExitPoint().transform.right, -angleEvelationAngle);
+                    accumulatedCoilAngle += angleStepCoilDegrees;
 
                     //Link the layouts
                     layout.SetPreviousLayout(prevLayout);
