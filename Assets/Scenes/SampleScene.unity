@@ -571,6 +571,8 @@ MonoBehaviour:
   possibleObjects:
   - {fileID: 5166926900218110477, guid: 110bd010be627264582946f7ebcafce4, type: 3}
   - {fileID: 4778390221511688686, guid: d61642aa95675a34ca79ad6381788706, type: 3}
+  - {fileID: 4124756291820121072, guid: e4f7a2d3fdb09de4db4a2a4304a9ad9c, type: 3}
+  - {fileID: 1841818965501092454, guid: c23bcf9593e54434680f4d401b0ee34d, type: 3}
   spawnLocations:
   - {fileID: 730054351}
   - {fileID: 1591651238}
