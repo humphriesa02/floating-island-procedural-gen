@@ -571,13 +571,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   islandCrustBottomRadius: 15
-  islandCrustTopRadius: 20
+  islandCrustTopRadius: 18
   islandCrustHeight: 4
   islandBaseHeight: 15
-  islandVertices: 15
+  islandVertices: 35
   crustColor: {r: 0, g: 1, b: 0, a: 1}
   baseColor: {r: 0.5882353, g: 0.29411766, b: 0, a: 1}
   bottomColor: {r: 0.7529412, g: 0.2509804, b: 0, a: 1}
+  perlinNoiseIntensity: 5
   possibleObjects:
   - {fileID: 5166926900218110477, guid: 110bd010be627264582946f7ebcafce4, type: 3}
   - {fileID: 4778390221511688686, guid: d61642aa95675a34ca79ad6381788706, type: 3}
