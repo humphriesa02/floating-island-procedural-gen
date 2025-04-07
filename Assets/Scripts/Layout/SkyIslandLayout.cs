@@ -32,6 +32,14 @@ public abstract class SkyIslandLayout : MonoBehaviour
         layoutCenter = gameObject.transform.position;
     }
 
+    private void Awake()
+    {
+        entryPoint.transform.localPosition = new Vector3(0, 0, -halfLength);
+        exitPoint.transform.localPosition = new Vector3(0, 0, halfLength);
+        leftPoint.transform.localPosition = new Vector3(-halfWidth, 0, 0);
+        rightPoint.transform.localPosition = new Vector3(halfWidth, 0, 0);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -42,6 +50,14 @@ public abstract class SkyIslandLayout : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireCube(layoutCenter, new Vector3(halfWidth * 2, halfHeight * 2, halfLength * 2));
+
+        Gizmos.color = Color.green;
+        if (entryPoint) Gizmos.DrawSphere(entryPoint.transform.position, 0.5f);
+        if (exitPoint) Gizmos.DrawSphere(exitPoint.transform.position, 0.5f);
+
+        Gizmos.color = Color.red;
+        if (leftPoint) Gizmos.DrawSphere(leftPoint.transform.position, 0.5f);
+        if (rightPoint) Gizmos.DrawSphere(rightPoint.transform.position, 0.5f);
     }
 
     public void SetConnectionPoints(GameObject entry, GameObject exit, GameObject left, GameObject right)
@@ -55,7 +71,32 @@ public abstract class SkyIslandLayout : MonoBehaviour
     public float getHalfWidth() { return halfWidth; }
     public float getHalfLength() { return halfLength; }
     public float getHalfHeight() { return halfHeight; }
+    public GameObject getEntryPoint() { return entryPoint; }
+    public GameObject getExitPoint() {  return exitPoint; }
+    public GameObject getLeftPoint() {  return leftPoint; }
+    public GameObject getRightPoint() {  return rightPoint; }
+    public void SetPreviousLayout(SkyIslandLayout layout)
+    {
+        previousLayout = layout;
+    }
+    public void SetNextLayout(SkyIslandLayout layout)
+    {
+        nextLayout = layout;
+    }
 
     public abstract void GenerateIslands();
+
+    private void CreateOrMovePoint(ref GameObject point, string name, Vector3 localOffset)
+    {
+        if (point == null)
+        {
+            point = new GameObject(name);
+            point.transform.parent = this.transform;
+        }
+        point.name = name; // Keep it updated even if manually assigned
+        point.transform.localPosition = localOffset;
+        point.transform.localRotation = Quaternion.identity;
+    }
+
 
 }
