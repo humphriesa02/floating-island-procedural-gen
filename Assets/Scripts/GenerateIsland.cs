@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class GenerateIsland : MonoBehaviour
 {
-	[Header("Island Generation Settings")]
+	[Header("Island Generation Crust")]
 	[Tooltip("Minimum possible radius of the bottom most part of the crust.")]
 	[SerializeField] private float islandCrustBottomRadiusMin = 5f;
 	[Tooltip("Maximum radius of the bottom most part of the crust.")]
@@ -17,18 +17,22 @@ public class GenerateIsland : MonoBehaviour
 	[SerializeField] private float islandCrustHeightMin = 1f;
 	[Tooltip("Maximum height of the island's crust (platform).")]
 	[SerializeField] private float islandCrustHeightMax = 4f;
+	[Header("Island Generation Base")]
 	[Tooltip("Minimum height of the island's base (underneath the platform).")]
 	[SerializeField] private float islandBaseHeightMin = 5f;
 	[Tooltip("Maximum height of the island's base (underneath the platform).")]
 	[SerializeField] private float islandBaseHeightMax = 10f;
 	[Tooltip("Minimum size of the inner ring close to the cone tip.")]
+	[Header("Island Generation Inner Ring")]
 	[SerializeField] private float innerRingScaleMin = 0.2f; // Change this value to adjust the inner ring size.
 	[Tooltip("Maximum size of the inner ring close to the cone tip.")]
 	[SerializeField] private float innerRingScaleMax = 0.6f; // Change this value to adjust the inner ring size.
 	[Tooltip("Minimum number of vertices in the island mesh.")]
+	[Header("Island Generation Vertices")]
 	[SerializeField] private int totalIslandVerticesMin = 25;
 	[Tooltip("Maximum number of vertices in the island mesh.")]
-	[SerializeField] private int totalIslandVerticesMax = 100; 
+	[SerializeField] private int totalIslandVerticesMax = 100;
+	[Header("Island Generation Colors")]
 	[Tooltip("Color of the island's crust.")]
 	[SerializeField] private Color crustColor = Color.green;
 	[Tooltip("Color of the island's base.")]
@@ -37,6 +41,7 @@ public class GenerateIsland : MonoBehaviour
 	[SerializeField] private Color intermediateColor = new Color(255f / 255f, 224f / 255f, 189f / 255f);
 	[Tooltip("Color for the bottom most part of the base.")]
 	[SerializeField] private Color bottomColor = new Color(192f / 255f, 64f / 255f, 0f / 255f);
+	[Header("Island Generation Noise")]
 	[Tooltip("Minimum amount of randomness for the island vertices.")]
 	[SerializeField] private float perlinNoiseIntensityMin = 2.0f; // Amount of randomness to add to the island shape
 	[Tooltip("Maximum amount of randomness for the island vertices.")]
@@ -56,82 +61,52 @@ public class GenerateIsland : MonoBehaviour
     }
 
 	void GenerateIslandMesh(){
-		// Generate random values for the island parameters
+		// Randomly choose from min/max values
 		float islandCrustBottomRadius = Random.Range(islandCrustBottomRadiusMin, islandCrustBottomRadiusMax);
 		float islandBaseHeight = Random.Range(islandBaseHeightMin, islandBaseHeightMax);
 		float islandCrustTopRadius = Random.Range(islandCrustTopRadiusMin, islandCrustTopRadiusMax);
 		float islandCrustHeight = Random.Range(islandCrustHeightMin, islandCrustHeightMax);
 		int totalIslandVertices = Random.Range(totalIslandVerticesMin, totalIslandVerticesMax);
 		float perlinNoiseIntensity = Random.Range(perlinNoiseIntensityMin, perlinNoiseIntensityMax);
-		// Determine the Y position of the inner ring by lerping between the bottom ring (y=0) and cone tip (y = -islandBaseHeight).
-		float yPos = Random.Range(0.5f, 0.9f); // Random value between 0 and 1
-		float innerRingY = Mathf.Lerp(0, -islandBaseHeight, yPos); // Midway; adjust as needed.
+		float yPos = Random.Range(0.5f, 0.9f);
+		float innerRingY = Mathf.Lerp(0, -islandBaseHeight, yPos);
 		float innerRingScale = Random.Range(innerRingScaleMin, innerRingScaleMax);
 
 		Debug.Log($"Island Parameters: Bottom Radius: {islandCrustBottomRadius}, Base Height: {islandBaseHeight}, Top Radius: {islandCrustTopRadius}, Crust Height: {islandCrustHeight}, Vertices: {totalIslandVertices}, Perlin Noise Intensity: {perlinNoiseIntensity}");
 		/* Vertices */
 
         // Vertices we need to create the island shape
-        Vector3[] vertices = new Vector3[4 * totalIslandVertices + 3]; // 3 rings + cone tip + bottom center + top center
+        Vector3[] vertices = new Vector3[4 * totalIslandVertices + 3]; // 4 rings + cone tip + bottom center + top center
 
 		// Keep track of where we are in the vertices array
 		int vertIndex = 0;
 
-       	// Top ring (upper cylinder)
-        for (int i = 0; i < totalIslandVertices; i++)
-        {
-            float angle = i * Mathf.PI * 2f / totalIslandVertices;
-            float x = Mathf.Cos(angle) * islandCrustTopRadius;
-            float z = Mathf.Sin(angle) * islandCrustTopRadius;
-			float sample = Mathf.PerlinNoise(x / islandCrustTopRadius, z / islandCrustTopRadius) * perlinNoiseIntensity; // Perlin noise for randomness
-            vertices[vertIndex++] = new Vector3(x + sample, islandCrustHeight + sample, z + sample);
-        }
+		// Top ring of the crust
+		vertIndex = CreateVertexRing(totalIslandVertices, islandCrustTopRadius, islandCrustHeight, perlinNoiseIntensity, ref vertices, vertIndex);
 
-		// Bottom ring (lower cylinder)
-        for (int i = 0; i < totalIslandVertices; i++)
-        {
-            float angle = i * Mathf.PI * 2f / totalIslandVertices;
-            float x = Mathf.Cos(angle) * islandCrustBottomRadius;
-            float z = Mathf.Sin(angle) * islandCrustBottomRadius;
-			float sample = Mathf.PerlinNoise(x / islandCrustBottomRadius, z / islandCrustBottomRadius) * perlinNoiseIntensity;
-            vertices[vertIndex++] = new Vector3(x + sample, sample, z + sample); // Bottom ring at y = 0
-        }
+		// Bottom ring of the crust
+		vertIndex = CreateVertexRing(totalIslandVertices, islandCrustBottomRadius, 0.0f, perlinNoiseIntensity, ref vertices, vertIndex);
 
-		// 3. Inner cone ring (smaller than bottom ring) positioned at innerRingY,
-		// with a radius that is a fraction of the bottom ring's radius.
+		// Inner cone ring near the bottom post point of the island
 		float innerRingRadius = islandCrustBottomRadius * innerRingScale;
-		for (int i = 0; i < totalIslandVertices; i++){
-			float angle = i * Mathf.PI * 2f / totalIslandVertices;
-			float x = Mathf.Cos(angle) * innerRingRadius;
-			float z = Mathf.Sin(angle) * innerRingRadius;
-			// Apply Perlin noise similarly if desired.
-			float sample = Mathf.PerlinNoise(x / innerRingRadius, z / innerRingRadius) * perlinNoiseIntensity * 0.1f;
-			vertices[vertIndex++] = new Vector3(x + sample, innerRingY + sample, z + sample);
-		}
+		vertIndex = CreateVertexRing(totalIslandVertices, innerRingRadius, innerRingY, perlinNoiseIntensity, ref vertices, vertIndex, 0.1f);
 
 		// Island base cone tip vertex
 		int coneTipIndex = vertIndex;
 		vertices[vertIndex++] = new Vector3(0, -islandBaseHeight, 0);
 		
-		// Top face of the cylinder vertices
-		// Bottom center
+		// bottom center vertex for the crust
 		int bottomCenterIndex = vertIndex;
 		vertices[vertIndex++] = new Vector3(0, 0, 0);
 
+		// Another ring for the top for UVs
 		int topCapRingStart = vertIndex;
-		for (int i = 0; i < totalIslandVertices; i++){
-			float angle = i * Mathf.PI * 2f / totalIslandVertices;
-			float x = Mathf.Cos(angle) * islandCrustTopRadius;
-			float z = Mathf.Sin(angle) * islandCrustTopRadius;
-			// Optionally add similar noise if you like
-			float sample = Mathf.PerlinNoise(x / islandCrustTopRadius, z / islandCrustTopRadius) * perlinNoiseIntensity;
-			vertices[vertIndex++] = new Vector3(x + sample, islandCrustHeight + sample, z + sample);
-		}
+		vertIndex = CreateVertexRing(totalIslandVertices, islandCrustTopRadius, islandCrustHeight, perlinNoiseIntensity, ref vertices, vertIndex);
 
 		int topCenterIndex = vertIndex;
     	vertices[vertIndex++] = new Vector3(0, islandCrustHeight, 0);
 
-		// Triangles:
+		/* Triangles */
 		int crustTriangleCount = totalIslandVertices * 6;
 		int coneBottomInnerTriangleCount = totalIslandVertices * 6;
 		int coneInnerTipTriangleCount = totalIslandVertices * 3;
@@ -267,21 +242,21 @@ public class GenerateIsland : MonoBehaviour
 
         GetComponent<MeshFilter>().mesh = mesh;
 
-		// Set up the material
-		MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-        Material dynamicMaterial = new Material(Shader.Find("Custom/IslandShader"));
-        Texture2D diffuseTexture = Resources.Load<Texture2D>("IslandDiffuse");
-		Texture2D normalMapTexture = Resources.Load<Texture2D>("IslandNormalMap");
-		if(diffuseTexture != null)
-			Debug.Log($"Diffuse texture loaded: {diffuseTexture.name}");
-			dynamicMaterial.SetTexture("_MainTex", diffuseTexture);
-		if(normalMapTexture != null)
+		// To note, the material is set before runtime,
+		// requires the colors set here.
+	}
+
+	int CreateVertexRing(int numVertices, float ringRadius, float ringHeight, float perlinNoiseIntensity, ref Vector3[] vertices, int vertIndex, float perlinNoiseModifer=1.0f)
+	{
+		for (int i = 0; i < numVertices; i++)
 		{
-			Debug.Log($"Normal map texture loaded: {normalMapTexture.name}");
-			dynamicMaterial.SetTexture("_BumpMap", normalMapTexture);
-			dynamicMaterial.EnableKeyword("_NORMALMAP");
+			float angle = i * Mathf.PI * 2f / numVertices;
+			float x = Mathf.Cos(angle) * ringRadius;
+			float z = Mathf.Sin(angle) * ringRadius;
+			float sample = Mathf.PerlinNoise(x / ringRadius, z / ringRadius) * perlinNoiseIntensity * perlinNoiseModifer; // Perlin noise for randomness
+			vertices[vertIndex++] = new Vector3(x + sample, ringHeight + sample, z + sample);
 		}
-		meshRenderer.material = dynamicMaterial;
+		return vertIndex;
 	}
 
 	void PopulateIsland(){
