@@ -73,6 +73,7 @@ public class GenerateIsland : MonoBehaviour
 		float innerRingScale = Random.Range(innerRingScaleMin, innerRingScaleMax);
 
 		Debug.Log($"Island Parameters: Bottom Radius: {islandCrustBottomRadius}, Base Height: {islandBaseHeight}, Top Radius: {islandCrustTopRadius}, Crust Height: {islandCrustHeight}, Vertices: {totalIslandVertices}, Perlin Noise Intensity: {perlinNoiseIntensity}");
+		
 		/* Vertices */
 
         // Vertices we need to create the island shape
