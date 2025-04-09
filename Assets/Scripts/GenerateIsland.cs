@@ -52,7 +52,23 @@ public class GenerateIsland : MonoBehaviour
     [SerializeField] private GameObject[] possibleObjects; // Objects that can be spawned on an island
     [SerializeField] private GameObject[] spawnLocations; // Locations to spawn the objects on the island
 
-	
+
+	public float IslandCrustBottomRadius { get; private set; }
+	public float IslandBaseHeight { get; private set; }
+	public float IslandCrustTopRadius { get; private set; }
+	public float IslandCrustHeight { get; private set; }
+	public int TotalIslandVertices { get; private set; }
+	public float PerlinNoiseIntensity { get; private set; }
+	public float InnerRingY { get; private set; }
+	public float InnerRingScale { get; private set; }
+
+	public float GetRadius(){
+		return Mathf.Max(IslandCrustBottomRadius, IslandCrustTopRadius);
+	}
+
+	public float GetHeight(){
+		return IslandBaseHeight + IslandCrustHeight;
+	}
 
     void Start()
     {
@@ -62,39 +78,37 @@ public class GenerateIsland : MonoBehaviour
 
 	void GenerateIslandMesh(){
 		// Randomly choose from min/max values
-		float islandCrustBottomRadius = Random.Range(islandCrustBottomRadiusMin, islandCrustBottomRadiusMax);
-		float islandBaseHeight = Random.Range(islandBaseHeightMin, islandBaseHeightMax);
-		float islandCrustTopRadius = Random.Range(islandCrustTopRadiusMin, islandCrustTopRadiusMax);
-		float islandCrustHeight = Random.Range(islandCrustHeightMin, islandCrustHeightMax);
-		int totalIslandVertices = Random.Range(totalIslandVerticesMin, totalIslandVerticesMax);
-		float perlinNoiseIntensity = Random.Range(perlinNoiseIntensityMin, perlinNoiseIntensityMax);
+		IslandCrustBottomRadius = Random.Range(islandCrustBottomRadiusMin, islandCrustBottomRadiusMax);
+		IslandBaseHeight = Random.Range(islandBaseHeightMin, islandBaseHeightMax);
+		IslandCrustTopRadius = Random.Range(islandCrustTopRadiusMin, islandCrustTopRadiusMax);
+		IslandCrustHeight = Random.Range(islandCrustHeightMin, islandCrustHeightMax);
+		TotalIslandVertices = Random.Range(totalIslandVerticesMin, totalIslandVerticesMax);
+		PerlinNoiseIntensity = Random.Range(perlinNoiseIntensityMin, perlinNoiseIntensityMax);
 		float yPos = Random.Range(0.5f, 0.9f);
-		float innerRingY = Mathf.Lerp(0, -islandBaseHeight, yPos);
-		float innerRingScale = Random.Range(innerRingScaleMin, innerRingScaleMax);
-
-		Debug.Log($"Island Parameters: Bottom Radius: {islandCrustBottomRadius}, Base Height: {islandBaseHeight}, Top Radius: {islandCrustTopRadius}, Crust Height: {islandCrustHeight}, Vertices: {totalIslandVertices}, Perlin Noise Intensity: {perlinNoiseIntensity}");
-		
+		InnerRingY = Mathf.Lerp(0, -IslandBaseHeight, yPos);
+		InnerRingScale = Random.Range(innerRingScaleMin, innerRingScaleMax);
+				
 		/* Vertices */
 
         // Vertices we need to create the island shape
-        Vector3[] vertices = new Vector3[4 * totalIslandVertices + 3]; // 4 rings + cone tip + bottom center + top center
+        Vector3[] vertices = new Vector3[4 * TotalIslandVertices + 3]; // 4 rings + cone tip + bottom center + top center
 
 		// Keep track of where we are in the vertices array
 		int vertIndex = 0;
 
 		// Top ring of the crust
-		vertIndex = CreateVertexRing(totalIslandVertices, islandCrustTopRadius, islandCrustHeight, perlinNoiseIntensity, ref vertices, vertIndex);
+		vertIndex = CreateVertexRing(TotalIslandVertices, IslandCrustTopRadius, IslandCrustHeight, PerlinNoiseIntensity, ref vertices, vertIndex);
 
 		// Bottom ring of the crust
-		vertIndex = CreateVertexRing(totalIslandVertices, islandCrustBottomRadius, 0.0f, perlinNoiseIntensity, ref vertices, vertIndex);
+		vertIndex = CreateVertexRing(TotalIslandVertices, IslandCrustBottomRadius, 0.0f, PerlinNoiseIntensity, ref vertices, vertIndex);
 
 		// Inner cone ring near the bottom post point of the island
-		float innerRingRadius = islandCrustBottomRadius * innerRingScale;
-		vertIndex = CreateVertexRing(totalIslandVertices, innerRingRadius, innerRingY, perlinNoiseIntensity, ref vertices, vertIndex, 0.1f);
+		float innerRingRadius = IslandCrustBottomRadius * InnerRingScale;
+		vertIndex = CreateVertexRing(TotalIslandVertices, innerRingRadius, InnerRingY, PerlinNoiseIntensity, ref vertices, vertIndex, 0.1f);
 
 		// Island base cone tip vertex
 		int coneTipIndex = vertIndex;
-		vertices[vertIndex++] = new Vector3(0, -islandBaseHeight, 0);
+		vertices[vertIndex++] = new Vector3(0, -IslandBaseHeight, 0);
 		
 		// bottom center vertex for the crust
 		int bottomCenterIndex = vertIndex;
@@ -102,43 +116,43 @@ public class GenerateIsland : MonoBehaviour
 
 		// Another ring for the top for UVs
 		int topCapRingStart = vertIndex;
-		vertIndex = CreateVertexRing(totalIslandVertices, islandCrustTopRadius, islandCrustHeight, perlinNoiseIntensity, ref vertices, vertIndex);
+		vertIndex = CreateVertexRing(TotalIslandVertices, IslandCrustTopRadius, IslandCrustHeight, PerlinNoiseIntensity, ref vertices, vertIndex);
 
 		int topCenterIndex = vertIndex;
-    	vertices[vertIndex++] = new Vector3(0, islandCrustHeight, 0);
+    	vertices[vertIndex++] = new Vector3(0, IslandCrustHeight, 0);
 
 		/* Triangles */
-		int crustTriangleCount = totalIslandVertices * 6;
-		int coneBottomInnerTriangleCount = totalIslandVertices * 6;
-		int coneInnerTipTriangleCount = totalIslandVertices * 3;
-		int topCapTriangleCount = totalIslandVertices * 3;
+		int crustTriangleCount = TotalIslandVertices * 6;
+		int coneBottomInnerTriangleCount = TotalIslandVertices * 6;
+		int coneInnerTipTriangleCount = TotalIslandVertices * 3;
+		int topCapTriangleCount = TotalIslandVertices * 3;
 		int totalTrianglesCount = crustTriangleCount + coneBottomInnerTriangleCount + coneInnerTipTriangleCount + topCapTriangleCount;
 		int[] triangles = new int[totalTrianglesCount];
 		// Keep track of where we are in the triangles array
 		int triIndex = 0;
 
 		// 1. Crust sides (two triangles per segment)
-		for (int i = 0; i < totalIslandVertices; i++)
+		for (int i = 0; i < TotalIslandVertices; i++)
 		{
-			int next = (i + 1) % totalIslandVertices;
+			int next = (i + 1) % TotalIslandVertices;
 			// First triangle
 			triangles[triIndex++] = i;
-			triangles[triIndex++] = totalIslandVertices + next;
-			triangles[triIndex++] = totalIslandVertices + i;
+			triangles[triIndex++] = TotalIslandVertices + next;
+			triangles[triIndex++] = TotalIslandVertices + i;
 
 			// Second triangle
 			triangles[triIndex++] = i;
 			triangles[triIndex++] = next;
-			triangles[triIndex++] = totalIslandVertices + next;
+			triangles[triIndex++] = TotalIslandVertices + next;
 		}
 
 		// 2. Cone lower section: Connect bottom ring to inner cone ring.
-		for (int i = 0; i < totalIslandVertices; i++){
-			int next = (i + 1) % totalIslandVertices;
-			int bottomCurrent = totalIslandVertices + i;
-			int bottomNext = totalIslandVertices + next;
-			int innerCurrent = totalIslandVertices * 2 + i;
-			int innerNext = totalIslandVertices * 2 + next;
+		for (int i = 0; i < TotalIslandVertices; i++){
+			int next = (i + 1) % TotalIslandVertices;
+			int bottomCurrent = TotalIslandVertices + i;
+			int bottomNext = TotalIslandVertices + next;
+			int innerCurrent = TotalIslandVertices * 2 + i;
+			int innerNext = TotalIslandVertices * 2 + next;
 			// Two triangles for the quad between bottom and inner rings:
 			triangles[triIndex++] = bottomCurrent;
 			triangles[triIndex++] = bottomNext;
@@ -150,11 +164,11 @@ public class GenerateIsland : MonoBehaviour
     	}
 
 		// 3. Connect inner cone ring to the cone tip
-		for (int i = 0; i < totalIslandVertices; i++)
+		for (int i = 0; i < TotalIslandVertices; i++)
 		{
-			int next = (i + 1) % totalIslandVertices;
-			int innerCurrent = totalIslandVertices * 2 + i;
-			int innerNext = totalIslandVertices * 2 + next;
+			int next = (i + 1) % TotalIslandVertices;
+			int innerCurrent = TotalIslandVertices * 2 + i;
+			int innerNext = TotalIslandVertices * 2 + next;
 			// One triangle per segment that brings the inner ring to the tip:
 			triangles[triIndex++] = innerCurrent;
 			triangles[triIndex++] = innerNext;
@@ -162,9 +176,9 @@ public class GenerateIsland : MonoBehaviour
 		}
 
 		// 4. Top cap connecting top ring to top center
-		for (int i = 0; i < totalIslandVertices; i++)
+		for (int i = 0; i < TotalIslandVertices; i++)
 		{
-			int next = (i + 1) % totalIslandVertices;
+			int next = (i + 1) % TotalIslandVertices;
 			triangles[triIndex++] = topCenterIndex;
 			triangles[triIndex++] = next;
 			triangles[triIndex++] = i;
@@ -174,33 +188,33 @@ public class GenerateIsland : MonoBehaviour
 		Vector2[] uvs = new Vector2[vertices.Length];
     
 		// For the side rings (cylindrical mapping):
-		// Top ring (side): indices 0 .. totalIslandVertices-1, V = 1.
-		for (int i = 0; i < totalIslandVertices; i++){
-			float angle = i * Mathf.PI * 2f / totalIslandVertices;
+		// Top ring (side): indices 0 .. TotalIslandVertices-1, V = 1.
+		for (int i = 0; i < TotalIslandVertices; i++){
+			float angle = i * Mathf.PI * 2f / TotalIslandVertices;
 			float u = angle / (Mathf.PI * 2f);
 			uvs[i] = new Vector2(u, 1.0f);
 		}
-		// Bottom ring: indices totalIslandVertices .. 2*totalIslandVertices-1, V = 0.
-		for (int i = totalIslandVertices; i < 2 * totalIslandVertices; i++){
-			int j = i - totalIslandVertices;
-			float angle = j * Mathf.PI * 2f / totalIslandVertices;
+		// Bottom ring: indices TotalIslandVertices .. 2*TotalIslandVertices-1, V = 0.
+		for (int i = TotalIslandVertices; i < 2 * TotalIslandVertices; i++){
+			int j = i - TotalIslandVertices;
+			float angle = j * Mathf.PI * 2f / TotalIslandVertices;
 			float u = angle / (Mathf.PI * 2f);
 			uvs[i] = new Vector2(u, 0.0f);
 		}
-		// Inner ring: indices 2*totalIslandVertices .. 3*totalIslandVertices-1.
+		// Inner ring: indices 2*TotalIslandVertices .. 3*TotalIslandVertices-1.
 		// For simplicity we set V = -0.5 (adjust as needed).
-		for (int i = 2 * totalIslandVertices; i < 3 * totalIslandVertices; i++){
-			int j = i - 2 * totalIslandVertices;
-			float angle = j * Mathf.PI * 2f / totalIslandVertices;
+		for (int i = 2 * TotalIslandVertices; i < 3 * TotalIslandVertices; i++){
+			int j = i - 2 * TotalIslandVertices;
+			float angle = j * Mathf.PI * 2f / TotalIslandVertices;
 			float u = angle / (Mathf.PI * 2f);
 			uvs[i] = new Vector2(u, -0.5f);
 		}
 		
 		// For the top cap ring: use radial UV mapping (polar coordinates).
 		// Map the center (0,0) to (0.5,0.5) and use the cosine/sine to get the UVs.
-		for (int i = topCapRingStart; i < topCapRingStart + totalIslandVertices; i++){
+		for (int i = topCapRingStart; i < topCapRingStart + TotalIslandVertices; i++){
 			int j = i - topCapRingStart;
-			float angle = j * Mathf.PI * 2f / totalIslandVertices;
+			float angle = j * Mathf.PI * 2f / TotalIslandVertices;
 			float u = (Mathf.Cos(angle) + 1) * 0.5f;
 			float v = (Mathf.Sin(angle) + 1) * 0.5f;
 			uvs[i] = new Vector2(u, v);
@@ -214,16 +228,16 @@ public class GenerateIsland : MonoBehaviour
 
 		/* Colors */
         Color[] colors = new Color[vertices.Length];
-		for (int i = 0; i < totalIslandVertices; i++){
+		for (int i = 0; i < TotalIslandVertices; i++){
 			// Use a gradient for the top ring.
 			float gradient = Mathf.PerlinNoise(vertices[i].x * 0.1f, vertices[i].z * 0.1f);
 			colors[i] = Color.Lerp(crustColor, intermediateColor, gradient); // Top ring color
 		}
-		for (int i = totalIslandVertices; i < totalIslandVertices * 2; i++){
+		for (int i = TotalIslandVertices; i < TotalIslandVertices * 2; i++){
 			float gradient = Mathf.PerlinNoise(vertices[i].x * 0.1f, vertices[i].z * 0.1f);
 			colors[i] = Color.Lerp(baseColor, bottomColor, gradient); // Bottom ring color
 		}
-		for (int i = totalIslandVertices * 2; i < totalIslandVertices * 3; i++){
+		for (int i = TotalIslandVertices * 2; i < TotalIslandVertices * 3; i++){
 			// Inner ring could be an intermediate color.
 			colors[i] = Color.Lerp(intermediateColor, bottomColor, 0.5f);
 		}
@@ -247,14 +261,14 @@ public class GenerateIsland : MonoBehaviour
 		// requires the colors set here.
 	}
 
-	int CreateVertexRing(int numVertices, float ringRadius, float ringHeight, float perlinNoiseIntensity, ref Vector3[] vertices, int vertIndex, float perlinNoiseModifer=1.0f)
+	int CreateVertexRing(int numVertices, float ringRadius, float ringHeight, float PerlinNoiseIntensity, ref Vector3[] vertices, int vertIndex, float perlinNoiseModifer=1.0f)
 	{
 		for (int i = 0; i < numVertices; i++)
 		{
 			float angle = i * Mathf.PI * 2f / numVertices;
 			float x = Mathf.Cos(angle) * ringRadius;
 			float z = Mathf.Sin(angle) * ringRadius;
-			float sample = Mathf.PerlinNoise(x / ringRadius, z / ringRadius) * perlinNoiseIntensity * perlinNoiseModifer; // Perlin noise for randomness
+			float sample = Mathf.PerlinNoise(x / ringRadius, z / ringRadius) * PerlinNoiseIntensity * perlinNoiseModifer; // Perlin noise for randomness
 			vertices[vertIndex++] = new Vector3(x + sample, ringHeight + sample, z + sample);
 		}
 		return vertIndex;
