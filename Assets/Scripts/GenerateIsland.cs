@@ -73,7 +73,7 @@ public class GenerateIsland : MonoBehaviour
     void Start()
     {
 		GenerateIslandMesh();
-		PopulateIsland();
+		//PopulateIsland();
     }
 
 	void GenerateIslandMesh(){
@@ -87,7 +87,7 @@ public class GenerateIsland : MonoBehaviour
 		float yPos = Random.Range(0.5f, 0.9f);
 		InnerRingY = Mathf.Lerp(0, -IslandBaseHeight, yPos);
 		InnerRingScale = Random.Range(innerRingScaleMin, innerRingScaleMax);
-				
+
 		/* Vertices */
 
         // Vertices we need to create the island shape
@@ -118,14 +118,15 @@ public class GenerateIsland : MonoBehaviour
 		int topCapRingStart = vertIndex;
 		vertIndex = CreateVertexRing(TotalIslandVertices, IslandCrustTopRadius, IslandCrustHeight, PerlinNoiseIntensity, ref vertices, vertIndex);
 
+		// Top center vertex for the crust
 		int topCenterIndex = vertIndex;
     	vertices[vertIndex++] = new Vector3(0, IslandCrustHeight, 0);
 
 		/* Triangles */
 		int crustTriangleCount = TotalIslandVertices * 6;
+		int topCapTriangleCount = TotalIslandVertices * 3;
 		int coneBottomInnerTriangleCount = TotalIslandVertices * 6;
 		int coneInnerTipTriangleCount = TotalIslandVertices * 3;
-		int topCapTriangleCount = TotalIslandVertices * 3;
 		int totalTrianglesCount = crustTriangleCount + coneBottomInnerTriangleCount + coneInnerTipTriangleCount + topCapTriangleCount;
 		int[] triangles = new int[totalTrianglesCount];
 		// Keep track of where we are in the triangles array
@@ -179,9 +180,13 @@ public class GenerateIsland : MonoBehaviour
 		for (int i = 0; i < TotalIslandVertices; i++)
 		{
 			int next = (i + 1) % TotalIslandVertices;
+			// Use the top cap ring indices instead of [i].
+			int ringCurrent = topCapRingStart + i;
+			int ringNext = topCapRingStart + next;
+
 			triangles[triIndex++] = topCenterIndex;
-			triangles[triIndex++] = next;
-			triangles[triIndex++] = i;
+			triangles[triIndex++] = ringNext;
+			triangles[triIndex++] = ringCurrent;
 		}
 
         /* UVs */
@@ -194,6 +199,7 @@ public class GenerateIsland : MonoBehaviour
 			float u = angle / (Mathf.PI * 2f);
 			uvs[i] = new Vector2(u, 1.0f);
 		}
+		uvs[TotalIslandVertices - 1] = new Vector2(1.0f, 1.0f);
 		// Bottom ring: indices TotalIslandVertices .. 2*TotalIslandVertices-1, V = 0.
 		for (int i = TotalIslandVertices; i < 2 * TotalIslandVertices; i++){
 			int j = i - TotalIslandVertices;
@@ -201,6 +207,7 @@ public class GenerateIsland : MonoBehaviour
 			float u = angle / (Mathf.PI * 2f);
 			uvs[i] = new Vector2(u, 0.0f);
 		}
+		uvs[2 * TotalIslandVertices - 1] = new Vector2(1.0f, 0.0f);
 		// Inner ring: indices 2*TotalIslandVertices .. 3*TotalIslandVertices-1.
 		// For simplicity we set V = -0.5 (adjust as needed).
 		for (int i = 2 * TotalIslandVertices; i < 3 * TotalIslandVertices; i++){
@@ -209,7 +216,7 @@ public class GenerateIsland : MonoBehaviour
 			float u = angle / (Mathf.PI * 2f);
 			uvs[i] = new Vector2(u, -0.5f);
 		}
-		
+		uvs[3 * TotalIslandVertices - 1] = new Vector2(1.0f, -0.5f);
 		// For the top cap ring: use radial UV mapping (polar coordinates).
 		// Map the center (0,0) to (0.5,0.5) and use the cosine/sine to get the UVs.
 		for (int i = topCapRingStart; i < topCapRingStart + TotalIslandVertices; i++){
