@@ -106,7 +106,6 @@ public class SkyIslandBranchGenerator : MonoBehaviour
 
         //Get Transform
         Transform entry = layout.getEntryPoint().transform;
-        Transform exit = prevLayout.getExitPoint().transform;
 
         Vector3 offset = entry.position - layout.transform.position;
         layout.transform.position = startPoint - offset;
