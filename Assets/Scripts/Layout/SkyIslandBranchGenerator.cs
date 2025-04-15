@@ -51,12 +51,24 @@ public class SkyIslandBranchGenerator : MonoBehaviour
             SkyIslandLayout layout = layoutGO.GetComponent<SkyIslandLayout>();
             if(layout == null) continue;
 
+            //Allign the Layout
+            if (prevLayout == null)
+            {
+                AlignLayouts(layout, startPosition);
+            }
+            else
+            {
+                AlignLayouts(layout, prevLayout.getExitPoint().transform.position);
+            }
+
             //Update the Links
             if(prevLayout != null)
             {
                 layout.SetPreviousLayout(prevLayout);
                 prevLayout.SetNextLayout(layout);
             }
+
+
 
             //Generat the Islands
             layout.GenerateIslands();
@@ -68,13 +80,36 @@ public class SkyIslandBranchGenerator : MonoBehaviour
             //Generater Sub Branch
             if (Random.value < 0.25f && depth < maxBranchDepth)
             {
-                Vector3 branchStart = layout.getLeftPoint().transform.position;
-                Quaternion branchRot = layout.getLeftPoint().transform.rotation;
+                if (Random.value > 0.5f)
+                {
+                    Vector3 branchStart = layout.getLeftPoint().transform.position;
+                    Vector3 forward = layout.getLeftPoint().transform.position - layout.transform.position;
+                    Quaternion branchRot = Quaternion.LookRotation(forward, Vector3.up);
+                    GenerateBranch(branchStart, branchRot, depth + 1);
+                }
+                else
+                {
+                    Vector3 branchStart = layout.getRightPoint().transform.position;
+                    Vector3 forward = layout.getRightPoint().transform.position - layout.transform.position;
+                    Quaternion branchRot = Quaternion.LookRotation(forward, Vector3.down);
+                    GenerateBranch(branchStart, branchRot, depth + 1);
+                }
 
-                GenerateBranch(branchStart, branchRot, depth + 1);
             }
 
         }
+
+    }
+
+    private void AlignLayouts(SkyIslandLayout layout, Vector3 startPoint)
+    {
+
+        //Get Transform
+        Transform entry = layout.getEntryPoint().transform;
+        Transform exit = prevLayout.getExitPoint().transform;
+
+        Vector3 offset = entry.position - layout.transform.position;
+        layout.transform.position = startPoint - offset;
 
     }
 
