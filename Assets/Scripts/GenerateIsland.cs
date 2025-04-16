@@ -1,4 +1,4 @@
-using UnityEditor.EditorTools;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
@@ -50,7 +50,14 @@ public class GenerateIsland : MonoBehaviour
 	[Header("Island Population Settings")]
 	[Tooltip("The possible objects to be spawned on the island.")]
     [SerializeField] private GameObject[] possibleObjects; // Objects that can be spawned on an island
-    [SerializeField] private GameObject[] spawnLocations; // Locations to spawn the objects on the island
+	[Tooltip("The minimum distance between objects on the island.")]
+	[SerializeField] private float minDistanceBetweenObjects = 2.0f; // Minimum distance between objects on the island
+	[Tooltip("The maximum distance between objects on the island.")]
+	[SerializeField] private float maxDistanceBetweenObjects = 5.0f; // Minimum distance between objects on the island
+	[Tooltip("The minimum number of objects to spawn on the island.")]
+	[SerializeField] private int minObjectsToSpawn = 5; // Minimum number of objects to spawn on the island
+	[Tooltip("The maximum number of objects to spawn on the island.")]
+	[SerializeField] private int maxObjectsToSpawn = 10; // Maximum number of objects to spawn on the island
 
 
 	public float IslandCrustBottomRadius { get; private set; }
@@ -73,7 +80,7 @@ public class GenerateIsland : MonoBehaviour
     void Start()
     {
 		GenerateIslandMesh();
-		//PopulateIsland();
+		PopulateIsland();
     }
 
 	public void GenerateIslandMesh(){
@@ -283,16 +290,37 @@ public class GenerateIsland : MonoBehaviour
 	}
 
 	public void PopulateIsland(){
-		for (int i = 0; i < spawnLocations.Length; i++)
-		{
-			if (possibleObjects.Length > 0)
-			{
-				// Choose a random object from possibleObjects
-				GameObject randomObject = possibleObjects[Random.Range(0, possibleObjects.Length)];
+		if (possibleObjects.Length == 0) return;
 
-				// Instantiate the object as a child of the spawn location
-				GameObject tempObj = Instantiate(randomObject, spawnLocations[i].transform.position, Quaternion.identity, spawnLocations[i].transform);
-				tempObj.transform.Rotate(0, Random.Range(0, 360), 0);
+		float islandRadius = IslandCrustTopRadius;
+		float yHeight = IslandCrustHeight;
+		int objectsToSpawn = Random.Range(minObjectsToSpawn, maxObjectsToSpawn);
+		List<Vector3> usedPositions = new List<Vector3>();
+		for (int i = 0; i < objectsToSpawn; i++)
+		{
+			GameObject prefab = possibleObjects[Random.Range(0, possibleObjects.Length)];
+			float uniformScale = Random.Range(0.5f, 2.0f);
+			float distanceBetweenObjects = uniformScale * Random.Range(minDistanceBetweenObjects, maxDistanceBetweenObjects);
+			for (int attempt = 0; attempt < 10; attempt++){
+				Vector2 rand = Random.insideUnitCircle * islandRadius * 0.6f;
+				Vector3 candidatePos = new Vector3(rand.x, yHeight, rand.y);
+
+				bool tooClose = false;
+				for (int j = 0; j < usedPositions.Count; j++)
+				{
+					if (Vector3.Distance(candidatePos, usedPositions[j]) < distanceBetweenObjects)
+					{
+						tooClose = true;
+						break;
+					}
+				}
+				if (tooClose) continue;
+				usedPositions.Add(candidatePos);
+				GameObject obj = Instantiate(prefab);
+				obj.transform.position = transform.TransformPoint(candidatePos);
+				obj.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
+				obj.transform.SetParent(transform);
+				break;
 			}
 		}
 	}
@@ -301,15 +329,9 @@ public class GenerateIsland : MonoBehaviour
 		var mesh = GetComponent<MeshFilter>().sharedMesh;
 		if (mesh) DestroyImmediate(mesh);
 		GetComponent<MeshFilter>().mesh = null;
-		for (int i = 0; i < spawnLocations.Length; i++)
+		for (int i = transform.childCount - 1; i >= 0; i--)
 		{
-			if (spawnLocations[i].transform.childCount > 0)
-			{
-				for (int j = 0; j < spawnLocations[i].transform.childCount; j++)
-				{
-					DestroyImmediate(spawnLocations[i].transform.GetChild(j).gameObject);
-				}
-			}
+			DestroyImmediate(transform.GetChild(i).gameObject);
 		}
 	}
 }
