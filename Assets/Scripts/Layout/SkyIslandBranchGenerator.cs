@@ -11,6 +11,8 @@ public class SkyIslandBranchGenerator : MonoBehaviour
     [SerializeField] private float branchSpacing = 20.0f;
     [SerializeField] private float branchScaleFactor = 0.8f;
 
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -78,7 +80,7 @@ public class SkyIslandBranchGenerator : MonoBehaviour
             prevLayout = layout;
 
             //Generater Sub Branch
-            if (Random.value < 0.25f && depth < maxBranchDepth)
+            if (Random.value < 0.15f && depth == 0)
             {
                 if (Random.value > 0.5f)
                 {
