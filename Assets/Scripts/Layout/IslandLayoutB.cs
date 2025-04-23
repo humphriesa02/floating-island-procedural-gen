@@ -1,9 +1,11 @@
 using NUnit.Framework;
 using UnityEngine;
+using System.Collections.Generic;
+using static UnityEditor.PlayerSettings;
 
 public class IslandLayoutB : SkyIslandLayout
 {
-    [SerializeField] private GameObject[] islandStructures; // Prefabs to use for generating islands in this layout
+    [SerializeField] private GameObject islandStructure; // Prefabs to use for generating islands in this layout
     [SerializeField] private int lowerBound = 2;
     [SerializeField] private int upperBound = 5;
 
@@ -21,54 +23,127 @@ public class IslandLayoutB : SkyIslandLayout
 
     public override void GenerateIslands()
     {
-        GameObject[] spawnLocations = new GameObject[Random.Range(lowerBound, upperBound)];
+        int islandCount = Random.Range(lowerBound, upperBound);
+        List<GameObject> islands = new List<GameObject>();
 
-        for(int i = 0; i < spawnLocations.Length; i++)
+        SkyIslandLayout prevLayout = GetPreviousLayout();
+        SkyIslandLayout nextLayout = GetNextLayout(); 
+        if(prevLayout != null)
+        {
+            GameObject[] prevIslands = prevLayout.getSkyIslands();
+        }
+        if(nextLayout != null)
+        {
+            GameObject[] nextIslands = nextLayout.getSkyIslands();
+        }
+
+        for (int i = 0; i < islandCount; i++)
         {
             // Create a new empty GameObject at random positions within the layout bounds for spawn locations
             GameObject newSpawnLocation = new GameObject($"SpawnLocation_{i}");
             bool valid = false;
             int iterationLimit = 100; // Prevent infinite loop in case of an error
-            while (!valid)
+            Vector3 pos = Vector3.zero;
+
+            while (!valid && iterationLimit > 0)
             {
                 float xPos = Random.Range(-getHalfWidth(), getHalfWidth());
                 float yPos = Random.Range(-getHalfHeight(), getHalfHeight());
                 float zPos = Random.Range(-getHalfLength(), getHalfLength());
-                Vector3 pos = transform.position;
-                newSpawnLocation.transform.position = new Vector3(xPos + pos.x, yPos + pos.y, zPos + pos.z);
-                if (i > 0)
+                pos = new Vector3(xPos + transform.position.x, yPos + transform.position.y, zPos + transform.position.z);
+
+                GameObject tempIsland = Instantiate(islandStructure);
+                float currRad = tempIsland.GetComponent<GenerateIsland>().GetRadius();
+                float currHeight = tempIsland.GetComponent<GenerateIsland>().GetHeight();
+                Debug.Log($"Prefab Island Initialized: Radius={currRad}, Height={currHeight}");
+
+                valid = true;
+
+                foreach (GameObject prevIsland in islands)
                 {
-                    for(int j = 0; j < i; j++)
+                    float prevRad = prevIsland.GetComponent<GenerateIsland>().GetRadius();
+                    float prevHeight = prevIsland.GetComponent<GenerateIsland>().GetHeight();
+                    Debug.Log($"Previous Island: Radius={prevRad}, Height={prevHeight}");
+
+                    float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, prevIsland.transform.position, prevRad, prevHeight);
+                    Debug.Log($"Closest Distance: {closestDistance}");
+
+                    if (closestDistance <= 7.0f)
                     {
-                        float distance = Vector3.Distance(newSpawnLocation.transform.position, spawnLocations[j].transform.position);
-                        if(distance < 5.0f) // Adjust this value to control the minimum distance between islands
+                        Debug.Log($"Island {i} is too close to another island. Distance: {closestDistance}");
+                        valid = false;
+                        break;
+                    }
+                }
+                if (valid && prevLayout != null)
+                {
+                    foreach (GameObject prevIsland in prevLayout.SkyIslands)
+                    {
+                        float prevRad = prevIsland.GetComponent<GenerateIsland>().GetRadius();
+                        float prevHeight = prevIsland.GetComponent<GenerateIsland>().GetHeight();
+
+                        float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, prevIsland.transform.position, prevRad, prevHeight);
+                        if (closestDistance <= 7.0f)
                         {
                             valid = false;
                             break;
                         }
-                        else
-                        {
-                            valid = true;
-                        }
-                        
                     }
                 }
+
+                if (valid && nextLayout != null)
+                {
+                    foreach (GameObject nextIsland in nextLayout.SkyIslands)
+                    {
+                        float nextRad = nextIsland.GetComponent<GenerateIsland>().GetRadius();
+                        float nextHeight = nextIsland.GetComponent<GenerateIsland>().GetHeight();
+
+                        float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, nextIsland.transform.position, nextRad, nextHeight);
+                        if (closestDistance <= 10.0f)
+                        {
+                            valid = false;
+                            break;
+                        }
+                    }
+                }
+
                 iterationLimit--;
                 if (iterationLimit <= 0)
                 {
-                    valid = true;
-                    break;
+                    Debug.LogWarning($"Failed to find a valid position for island {i}.");
+                    Destroy(newSpawnLocation);
+                    continue;
+                }
+                if (valid)
+                {
+                    tempIsland.transform.parent = newSpawnLocation.transform;
+                    tempIsland.transform.Rotate(0, Random.Range(0, 360), 0);
+                    islands.Add(tempIsland);
+                    newSpawnLocation.transform.position = pos;
+                }
+                else
+                {
+                    Destroy(tempIsland);
+                    Destroy(newSpawnLocation);
                 }
             }
-            
-            spawnLocations[i] = newSpawnLocation;
-
-            GameObject island = islandStructures[Random.Range(0, islandStructures.Length)];
-            GameObject tempIsland = Instantiate(island, spawnLocations[i].transform.position, Quaternion.identity, spawnLocations[i].transform);
-            tempIsland.transform.Rotate(0, Random.Range(0, 360), 0);
         }
+        skyIslands = islands.ToArray();
+    }
 
-        
+    private float CalculateClosestDistance(Vector3 pos1, float radius1, float height1, Vector3 pos2, float radius2, float height2)
+    {
+        // Calculate horizontal distance in the XZ plane
+        Vector3 horizontalVector = new Vector3(pos2.x - pos1.x, 0, pos2.z - pos1.z);
+        float horizontalDistance = horizontalVector.magnitude - (radius1 + radius2);
+        horizontalDistance = Mathf.Max(0, horizontalDistance); // If overlapping, set to 0
+
+        // Calculate vertical distance in the Y axis
+        float verticalDistance = Mathf.Abs(pos2.y - pos1.y) - (height1 / 2 + height2 / 2);
+        verticalDistance = Mathf.Max(0, verticalDistance); // If overlapping, set to 0
+
+        // Combine horizontal and vertical distances using Pythagorean theorem
+        return Mathf.Sqrt(horizontalDistance * horizontalDistance + verticalDistance * verticalDistance);
     }
 
 }
