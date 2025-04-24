@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1550416296652139840}
   - component: {fileID: 3060982003174009715}
   - component: {fileID: 4019316523036088256}
-  - component: {fileID: 7475170390806764330}
+  - component: {fileID: 1523589594991586575}
   m_Layer: 0
   m_Name: Island
   m_TagString: Untagged
@@ -87,7 +87,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7475170390806764330
+--- !u!114 &1523589594991586575
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -96,33 +96,34 @@ MonoBehaviour:
   m_GameObject: {fileID: 9210500063787357101}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9ce368d89a518e499d0be8d2254c78f, type: 3}
+  m_Script: {fileID: 11500000, guid: bb55fbb9647859f4ba118f11ad4c7343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  islandCrustBottomRadiusMin: 10
+  islandCrustBottomRadiusMin: 5
   islandCrustBottomRadiusMax: 15
-  islandCrustTopRadiusMin: 15
-  islandCrustTopRadiusMax: 20
-  islandCrustHeightMin: 2
-  islandCrustHeightMax: 5
+  islandCrustTopRadiusMin: 5
+  islandCrustTopRadiusMax: 15
+  islandCrustHeightMin: 1
+  islandCrustHeightMax: 4
   islandBaseHeightMin: 5
-  islandBaseHeightMax: 20
+  islandBaseHeightMax: 10
   innerRingScaleMin: 0.2
   innerRingScaleMax: 0.6
-  totalIslandVerticesMin: 50
+  totalIslandVerticesMin: 25
   totalIslandVerticesMax: 100
   crustColor: {r: 0, g: 1, b: 0, a: 1}
-  baseColor: {r: 0.5882353, g: 0.29411766, b: 0, a: 1}
-  intermediateColor: {r: 1, g: 0.8784314, b: 0.7411765, a: 1}
-  bottomColor: {r: 0.7529412, g: 0.2509804, b: 0, a: 1}
+  baseColor: {r: 0.58, g: 0.3, b: 0, a: 1}
+  intermediateColor: {r: 1, g: 0.88, b: 0.75, a: 1}
+  bottomColor: {r: 0.75, g: 0.25, b: 0, a: 1}
   perlinNoiseIntensityMin: 2
   perlinNoiseIntensityMax: 4
   possibleObjects:
-  - {fileID: 5166926900218110477, guid: 110bd010be627264582946f7ebcafce4, type: 3}
-  - {fileID: 4778390221511688686, guid: d61642aa95675a34ca79ad6381788706, type: 3}
+  - {fileID: 5277420987186357094, guid: 5f76076c73b7f594ab45eec6e0359a40, type: 3}
   - {fileID: 4124756291820121072, guid: e4f7a2d3fdb09de4db4a2a4304a9ad9c, type: 3}
   - {fileID: 1841818965501092454, guid: c23bcf9593e54434680f4d401b0ee34d, type: 3}
-  minDistanceBetweenObjects: 3
+  - {fileID: 5166926900218110477, guid: 110bd010be627264582946f7ebcafce4, type: 3}
+  - {fileID: 4778390221511688686, guid: d61642aa95675a34ca79ad6381788706, type: 3}
+  minDistanceBetweenObjects: 2
   maxDistanceBetweenObjects: 5
-  minObjectsToSpawn: 8
-  maxObjectsToSpawn: 20
+  minObjectsToSpawn: 5
+  maxObjectsToSpawn: 10
