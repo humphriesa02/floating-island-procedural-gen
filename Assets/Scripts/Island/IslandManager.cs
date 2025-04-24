@@ -59,20 +59,33 @@ public class IslandManager : MonoBehaviour
 	[SerializeField] private int minObjectsToSpawn = 5; // Minimum number of objects to spawn on the island
 	[Tooltip("The maximum number of objects to spawn on the island.")]
 	[SerializeField] private int maxObjectsToSpawn = 10; // Maximum number of objects to spawn on the island
+    [Tooltip("Number of attempts at placing an object")]
+    [SerializeField] private int maxAttempts = 15;
+    [Tooltip("The maximum distance from the center of the island to spawn objects.")]
+    [SerializeField] private float maxDistanceFromCenter = 0.2f; // Maximum distance from the center of the island to spawn objects
+    [Tooltip("The maximum slope angle for the objects to be placed on the island.")]
+    [Range(0, 90)] [SerializeField] private float maxSlopeAngle = 45f; // Maximum slope angle for the objects to be placed on the island
 
     private readonly IslandMeshGenerator meshBuilder = new();
     private readonly IslandPopulator islandPopulator = new();
     private readonly IslandStats islandStats = new();
+    private readonly IslandMorpher islandMorpher = new();
+    private IslandVisualizer islandVisualizer;
     private IslandGenerationData generationData;
+    private IslandMeshResult meshResult;
     private IslandPopulationData populationData;
 
     // Components
     private MeshFilter meshFilter;
     private MeshRenderer meshRenderer;
 
+    // Only use this for placing objects for now. Can be removed if too slow
+    private MeshCollider meshCollider;
+
     private void Awake(){
         meshFilter = GetComponent<MeshFilter>();
         meshRenderer = GetComponent<MeshRenderer>();
+        islandVisualizer = GetComponent<IslandVisualizer>();
     }
 
     void Start()
@@ -80,6 +93,12 @@ public class IslandManager : MonoBehaviour
         Generate();
         Build();
         Populate();
+        islandStats.ResolveConflicts();
+        islandStats.CalculateAffinity();
+        Morph();
+        islandVisualizer.ApplyVisuals(islandStats, meshResult.Mesh, meshRenderer);
+
+        gameObject.isStatic = true;
     }
 
     public float GetRadius(){
@@ -92,10 +111,7 @@ public class IslandManager : MonoBehaviour
 		return generationData.IslandBaseHeight + generationData.IslandCrustHeight;
 	}
 
-    public string GetAffinity(){
-        if (islandStats == null) return "None";
-        return islandStats.Affinity;
-    }
+    public string GetAffinity() => islandStats == null ? "None" : islandStats.Affinity;
 
     [ContextMenu("Generate Island Data")]
 	void GenerateIslandDataContextMenu(){
@@ -138,7 +154,8 @@ public class IslandManager : MonoBehaviour
     }
 
     public void Build(){
-        meshFilter.mesh =  meshBuilder.Build(generationData);
+        meshResult = meshBuilder.Build(generationData);
+        meshFilter.mesh = meshResult.Mesh;
     }
     
 	void OnDrawGizmosSelected() {
@@ -148,6 +165,7 @@ public class IslandManager : MonoBehaviour
 		foreach (var v in mesh.vertices) {
 			Gizmos.DrawSphere(transform.TransformPoint(v), 0.1f);
 		}
+        islandMorpher.DrawMorphDebugGizmos(transform, meshFilter.sharedMesh);
 	}
 
 	public void Populate(){
@@ -159,11 +177,24 @@ public class IslandManager : MonoBehaviour
             minDistanceBetweenObjects,
             maxDistanceBetweenObjects,
             objectsToSpawn,
-            this.transform
+            this.transform,
+            maxAttempts,
+            maxSlopeAngle,
+            maxDistanceFromCenter
         );
-
-        islandPopulator.PopulateIsland(generationData, populationData, islandStats);
+        if (meshCollider == null) meshCollider = gameObject.AddComponent<MeshCollider>();
+        meshCollider.enabled = true;
+        islandPopulator.PopulateIsland(generationData, populationData, islandStats, meshCollider);
+        meshCollider.enabled = false;
 	}
+
+    public void Morph()
+    {
+        if (meshResult?.Mesh != null && islandStats != null)
+        {
+            islandMorpher.ApplyStatMorph(meshResult.Mesh, islandStats, meshResult.TopVertexIndices);
+        }
+    }
 
 	public void ClearIsland(){
 		var mesh = meshFilter.sharedMesh;

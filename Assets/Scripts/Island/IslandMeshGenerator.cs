@@ -1,8 +1,16 @@
 using UnityEngine;
 
+public class IslandMeshResult
+{
+	public Mesh Mesh;
+	public Vector3[] Vertices;
+	public int[] TopVertexIndices;
+}
+
 public class IslandMeshGenerator
 {
-	public Mesh Build(IslandGenerationData generationData){
+
+	public IslandMeshResult Build(IslandGenerationData generationData){
 		
 		int ringSize = generationData.TotalIslandVertices + 1;
 		// Index references for key vertices
@@ -26,7 +34,14 @@ public class IslandMeshGenerator
 		/* Apply mesh */
 		var mesh = ApplyMesh(vertices, triangles, uvs, colors);
 
-		return mesh;
+		int[] topVertexIndices = new int[ringSize];
+		for (int i = 0; i < ringSize; i++) topVertexIndices[i] = i;
+
+		return new IslandMeshResult {
+			Mesh = mesh,
+			Vertices = vertices,
+			TopVertexIndices = topVertexIndices
+		};
 	}
 	Mesh ApplyMesh(Vector3[] vertices , int[] triangles, Vector2[] uvs, Color[] colors){
 		// Assign mesh
@@ -172,12 +187,5 @@ public class IslandMeshGenerator
 		colors[topCenterIndex] = data.CrustColor;
 
 		return colors;
-	}
-
-	// Call this after we've placed objects on the island to adjust the mesh based on the objects' positions and sizes.
-	void Morph(IslandGenerationData data, IslandStats stats){
-		if (stats.Food > 10) data.IslandCrustTopRadius *= 1.25f;
-        if (stats.Danger > 10) data.PerlinNoiseIntensity *= 1.5f;
-        if (stats.People > 10) data.TotalIslandVertices += 10;
 	}
 }

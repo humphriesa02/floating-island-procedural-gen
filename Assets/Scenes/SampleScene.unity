@@ -435,9 +435,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1527325204}
-  - component: {fileID: 1527325205}
   - component: {fileID: 1527325207}
   - component: {fileID: 1527325206}
+  - component: {fileID: 1527325208}
   m_Layer: 0
   m_Name: Island
   m_TagString: Untagged
@@ -462,46 +462,6 @@ Transform:
   - {fileID: 1591651239}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1527325205
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1527325203}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9ce368d89a518e499d0be8d2254c78f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  islandCrustBottomRadiusMin: 5
-  islandCrustBottomRadiusMax: 15
-  islandCrustTopRadiusMin: 5
-  islandCrustTopRadiusMax: 15
-  islandCrustHeightMin: 1
-  islandCrustHeightMax: 4
-  islandBaseHeightMin: 5
-  islandBaseHeightMax: 10
-  innerRingScaleMin: 0.2
-  innerRingScaleMax: 0.6
-  totalIslandVerticesMin: 25
-  totalIslandVerticesMax: 100
-  crustColor: {r: 0, g: 1, b: 0, a: 1}
-  baseColor: {r: 0.58, g: 0.3, b: 0, a: 1}
-  intermediateColor: {r: 1, g: 0.88, b: 0.75, a: 1}
-  bottomColor: {r: 0.75, g: 0.25, b: 0, a: 1}
-  perlinNoiseIntensityMin: 2
-  perlinNoiseIntensityMax: 2
-  possibleObjects:
-  - {fileID: 5166926900218110477, guid: 110bd010be627264582946f7ebcafce4, type: 3}
-  - {fileID: 4778390221511688686, guid: d61642aa95675a34ca79ad6381788706, type: 3}
-  - {fileID: 4124756291820121072, guid: e4f7a2d3fdb09de4db4a2a4304a9ad9c, type: 3}
-  - {fileID: 1841818965501092454, guid: c23bcf9593e54434680f4d401b0ee34d, type: 3}
-  spawnLocations:
-  - {fileID: 0}
-  - {fileID: 1591651238}
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!23 &1527325206
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -555,6 +515,42 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1527325203}
   m_Mesh: {fileID: 0}
+--- !u!114 &1527325208
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1527325203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bb55fbb9647859f4ba118f11ad4c7343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  islandCrustBottomRadiusMin: 5
+  islandCrustBottomRadiusMax: 15
+  islandCrustTopRadiusMin: 5
+  islandCrustTopRadiusMax: 15
+  islandCrustHeightMin: 1
+  islandCrustHeightMax: 4
+  islandBaseHeightMin: 5
+  islandBaseHeightMax: 10
+  innerRingScaleMin: 0.2
+  innerRingScaleMax: 0.6
+  totalIslandVerticesMin: 25
+  totalIslandVerticesMax: 100
+  crustColor: {r: 0, g: 1, b: 0, a: 1}
+  baseColor: {r: 0.58, g: 0.3, b: 0, a: 1}
+  intermediateColor: {r: 1, g: 0.88, b: 0.75, a: 1}
+  bottomColor: {r: 0.75, g: 0.25, b: 0, a: 1}
+  perlinNoiseIntensityMin: 2
+  perlinNoiseIntensityMax: 2
+  possibleObjects: []
+  minDistanceBetweenObjects: 2
+  maxDistanceBetweenObjects: 5
+  minObjectsToSpawn: 5
+  maxObjectsToSpawn: 10
+  maxSlopeAngle: 45
 --- !u!1 &1591651238
 GameObject:
   m_ObjectHideFlags: 0
@@ -586,6 +582,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1527325204}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1882449990
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 21.489624
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 77.01285
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1550416296652139840, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9210500063787357101, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+      propertyPath: m_Name
+      value: Island (1)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
 --- !u!4 &543450653708643080
 Transform:
   m_ObjectHideFlags: 0
@@ -864,3 +917,5 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 8552166229630074853}
+  - {fileID: 1527325204}
+  - {fileID: 1882449990}

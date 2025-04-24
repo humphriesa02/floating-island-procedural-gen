@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3060982003174009715}
   - component: {fileID: 4019316523036088256}
   - component: {fileID: 1523589594991586575}
+  - component: {fileID: 2165628025761268239}
   m_Layer: 0
   m_Name: Island
   m_TagString: Untagged
@@ -110,12 +111,12 @@ MonoBehaviour:
   innerRingScaleMin: 0.2
   innerRingScaleMax: 0.6
   totalIslandVerticesMin: 25
-  totalIslandVerticesMax: 100
+  totalIslandVerticesMax: 40
   crustColor: {r: 0, g: 1, b: 0, a: 1}
   baseColor: {r: 0.58, g: 0.3, b: 0, a: 1}
   intermediateColor: {r: 1, g: 0.88, b: 0.75, a: 1}
   bottomColor: {r: 0.75, g: 0.25, b: 0, a: 1}
-  perlinNoiseIntensityMin: 2
+  perlinNoiseIntensityMin: 1
   perlinNoiseIntensityMax: 4
   possibleObjects:
   - {fileID: 5277420987186357094, guid: 5f76076c73b7f594ab45eec6e0359a40, type: 3}
@@ -123,7 +124,30 @@ MonoBehaviour:
   - {fileID: 1841818965501092454, guid: c23bcf9593e54434680f4d401b0ee34d, type: 3}
   - {fileID: 5166926900218110477, guid: 110bd010be627264582946f7ebcafce4, type: 3}
   - {fileID: 4778390221511688686, guid: d61642aa95675a34ca79ad6381788706, type: 3}
-  minDistanceBetweenObjects: 2
-  maxDistanceBetweenObjects: 5
-  minObjectsToSpawn: 5
-  maxObjectsToSpawn: 10
+  - {fileID: 5063668477496027688, guid: d82e842d944aa0145bd9b6475ce07803, type: 3}
+  - {fileID: 555446009294837616, guid: ccabb5763ada3f14298031f4ff4f46bc, type: 3}
+  - {fileID: 7470841274745626124, guid: 6b99a8a48d49a6e48a48391e1034378f, type: 3}
+  - {fileID: 6483439602195329056, guid: 584d03317b6de784bb37411fcd892ad8, type: 3}
+  minDistanceBetweenObjects: 8
+  maxDistanceBetweenObjects: 12
+  minObjectsToSpawn: 10
+  maxObjectsToSpawn: 15
+  maxAttempts: 15
+  maxDistanceFromCenter: 0.5
+  maxSlopeAngle: 35
+--- !u!114 &2165628025761268239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9210500063787357101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8189c3bee238584ba1c1886c1c11c6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  foodMat: {fileID: 2100000, guid: 335789d3799f4de4d8c635e28e32c80e, type: 2}
+  dangerMat: {fileID: 2100000, guid: d3da625a0c3491d46b44de7fabf9b4c0, type: 2}
+  defenseMat: {fileID: 2100000, guid: e2c0f6942bb1fd140b7e89fad81cb426, type: 2}
+  peopleMat: {fileID: 2100000, guid: f5d6b6323e9aabc4e9bf3b5db3c520df, type: 2}
