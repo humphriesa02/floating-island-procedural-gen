@@ -68,7 +68,7 @@ public class IslandLayoutB : SkyIslandLayout
                     float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, prevIsland.transform.position, prevRad, prevHeight);
                     Debug.Log($"Closest Distance: {closestDistance}");
 
-                    if (closestDistance <= 7.0f)
+                    if (closestDistance <= 10.0f)
                     {
                         Debug.Log($"Island {i} is too close to another island. Distance: {closestDistance}");
                         valid = false;
@@ -83,7 +83,7 @@ public class IslandLayoutB : SkyIslandLayout
                         float prevHeight = prevIsland.GetComponent<GenerateIsland>().GetHeight();
 
                         float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, prevIsland.transform.position, prevRad, prevHeight);
-                        if (closestDistance <= 7.0f)
+                        if (closestDistance <= 10.0f)
                         {
                             valid = false;
                             break;
@@ -146,4 +146,57 @@ public class IslandLayoutB : SkyIslandLayout
         return Mathf.Sqrt(horizontalDistance * horizontalDistance + verticalDistance * verticalDistance);
     }
 
+    public string ParseString(string str)
+    {
+        string rec = "None";
+        float fPercent = 25;
+        float pPercent = 50;
+        float dPercent = 75;
+        float danPercent = 100;
+
+        switch(str)
+        {
+            case "Food":
+                fPercent = 20;
+                pPercent = 60;
+                dPercent = 80;
+                break;
+            case "People":
+                fPercent = 20;
+                pPercent = 40;
+                dPercent = 60;
+
+                break;
+            case "Defense":
+                fPercent = 40;
+                pPercent = 60;
+                dPercent = 80;
+                break;
+            case "Danger":
+                fPercent = 20;
+                pPercent = 40;
+                dPercent = 80;
+                break;
+        }
+
+        float randPercent = Random.Range(0, 100);
+        if (randPercent <= fPercent)
+        {
+            rec = "People";
+        }
+        else if (randPercent <= pPercent)
+        {
+            rec = "Danger";
+        }
+        else if (randPercent <= dPercent)
+        {
+            rec = "Food";
+        }
+        else if (randPercent <= danPercent)
+        {
+            rec = "Defense";
+        }
+
+            return rec;
+    }
 }
