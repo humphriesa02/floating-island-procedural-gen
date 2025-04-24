@@ -53,16 +53,16 @@ public class IslandLayoutB : SkyIslandLayout
                 pos = new Vector3(xPos + transform.position.x, yPos + transform.position.y, zPos + transform.position.z);
 
                 GameObject tempIsland = Instantiate(islandStructure);
-                float currRad = tempIsland.GetComponent<GenerateIsland>().GetRadius();
-                float currHeight = tempIsland.GetComponent<GenerateIsland>().GetHeight();
+                float currRad = tempIsland.GetComponent<IslandManager>().GetRadius();
+                float currHeight = tempIsland.GetComponent<IslandManager>().GetHeight();
                 Debug.Log($"Prefab Island Initialized: Radius={currRad}, Height={currHeight}");
 
                 valid = true;
 
                 foreach (GameObject prevIsland in islands)
                 {
-                    float prevRad = prevIsland.GetComponent<GenerateIsland>().GetRadius();
-                    float prevHeight = prevIsland.GetComponent<GenerateIsland>().GetHeight();
+                    float prevRad = prevIsland.GetComponent<IslandManager>().GetRadius();
+                    float prevHeight = prevIsland.GetComponent<IslandManager>().GetHeight();
                     Debug.Log($"Previous Island: Radius={prevRad}, Height={prevHeight}");
 
                     float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, prevIsland.transform.position, prevRad, prevHeight);
@@ -79,8 +79,8 @@ public class IslandLayoutB : SkyIslandLayout
                 {
                     foreach (GameObject prevIsland in prevLayout.SkyIslands)
                     {
-                        float prevRad = prevIsland.GetComponent<GenerateIsland>().GetRadius();
-                        float prevHeight = prevIsland.GetComponent<GenerateIsland>().GetHeight();
+                        float prevRad = prevIsland.GetComponent<IslandManager>().GetRadius();
+                        float prevHeight = prevIsland.GetComponent<IslandManager>().GetHeight();
 
                         float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, prevIsland.transform.position, prevRad, prevHeight);
                         if (closestDistance <= 10.0f)
@@ -95,8 +95,8 @@ public class IslandLayoutB : SkyIslandLayout
                 {
                     foreach (GameObject nextIsland in nextLayout.SkyIslands)
                     {
-                        float nextRad = nextIsland.GetComponent<GenerateIsland>().GetRadius();
-                        float nextHeight = nextIsland.GetComponent<GenerateIsland>().GetHeight();
+                        float nextRad = nextIsland.GetComponent<IslandManager>().GetRadius();
+                        float nextHeight = nextIsland.GetComponent<IslandManager>().GetHeight();
 
                         float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, nextIsland.transform.position, nextRad, nextHeight);
                         if (closestDistance <= 10.0f)
