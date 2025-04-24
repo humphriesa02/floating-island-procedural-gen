@@ -74,6 +74,7 @@ public class SkyIslandBranchGenerator : MonoBehaviour
 
             //Generat the Islands
             layout.GenerateIslands();
+            layout.GradiantSeparation();
 
             //Update the Loop Variables
             currentPos = layout.getExitPoint().transform.position;

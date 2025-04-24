@@ -83,6 +83,7 @@ public class SkyIslandSpiralGenerator : MonoBehaviour
 
                 //Generate Islands
                 layout.GenerateIslands();
+                layout.GradiantSeparation();
 
                 //Update previous layout
                 prevLayout = layout;
