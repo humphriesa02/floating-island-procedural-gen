@@ -180,3 +180,6 @@ MonoBehaviour:
   halfLength: 50
   halfHeight: 25
   skyIslands: []
+  islandStructure: {fileID: 9210500063787357101, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
+  lowerBound: 2
+  upperBound: 5

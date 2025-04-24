@@ -20,7 +20,7 @@ public abstract class SkyIslandLayout : MonoBehaviour
     [SerializeField] private SkyIslandLayout nextLayout { get; set; }
 
     [Header("SkyIslands (Generated)")]
-    [SerializeField, HideInInspector] private GameObject[] skyIslands;
+    [SerializeField, HideInInspector] protected GameObject[] skyIslands;
     public GameObject[] SkyIslands => skyIslands;
 
     /* The Center of the Layout */
@@ -97,7 +97,22 @@ public abstract class SkyIslandLayout : MonoBehaviour
         nextLayout = layout;
     }
 
+    public SkyIslandLayout GetPreviousLayout()
+    {
+        return previousLayout;
+    }
+
+    public SkyIslandLayout GetNextLayout()
+    {
+        return nextLayout;
+    }
+
     public abstract void GenerateIslands();
+
+    public GameObject[] getSkyIslands()
+    {
+        return SkyIslands;
+    }
 
     private void CreateOrMovePoint(ref GameObject point, string name, Vector3 localOffset)
     {
