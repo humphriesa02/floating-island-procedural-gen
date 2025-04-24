@@ -54,6 +54,14 @@ public class IslandVisualizer : MonoBehaviour
         return foodTint * f + dangerTint * d + defenseTint * def + peopleTint * p;
     }
 
+    public void ApplyLODTint(IslandStats stats, Material lodMaterial)
+    {
+        if (lodMaterial == null) return;
+        Color tint = GetTintColor(stats);
+        Debug.Log($"Applying tint: {tint} to LOD material: {lodMaterial.name}");
+        lodMaterial.color = tint;
+    }
+
     private Material GetMaterialByAffinity(string affinity)
     {
         return affinity switch

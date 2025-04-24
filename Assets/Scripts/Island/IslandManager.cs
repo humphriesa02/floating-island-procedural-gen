@@ -91,6 +91,8 @@ public class IslandManager : MonoBehaviour
 
     [SerializeField] private LODGroup lodGroup;
 
+    private MeshRenderer lodRenderer;
+
     private void Awake(){
         if (meshFilter == null)  // Check if the MeshFilter is not already assigned
             meshFilter = GetComponent<MeshFilter>();
@@ -141,14 +143,26 @@ public class IslandManager : MonoBehaviour
 
 
     public void CreateIsland(string affinity = "None"){
-        Generate();
-        Build();
-        Populate(affinity);
+        Generate(); // Generate mesh data
+        Build(); // Build the mesh and LODs
+        Populate(affinity); // Populate the island with objects
+
+        // Simulation to find conflict and affinity
         islandStats.ResolveConflicts();
         islandStats.CalculateAffinity();
+
+        // Actually morph the island mesh based on the affinity
         Morph();
+
+        // Apply the island stats to visually update the mesh and LODs
         islandVisualizer.ApplyVisuals(islandStats, meshResult.Mesh, meshRenderer);
 
+        if (lodRenderer != null)
+        {
+            islandVisualizer.ApplyLODTint(islandStats, lodRenderer.material);
+        }
+
+        // Set the object to be static for performance
         gameObject.isStatic = true;
     }
 
@@ -177,6 +191,7 @@ public class IslandManager : MonoBehaviour
 
         GameObject lodMeshObj = lodGenerator.GenerateLODIsland(generationData, lodIslandMaterial);
         lodMeshObj.transform.SetParent(transform, false);
+        lodRenderer = lodMeshObj.GetComponent<MeshRenderer>();
 
         var lod0 = new LOD(lod0Threshold, new Renderer[] { meshRenderer });
         var lod1 = new LOD(lod1Threshold, new Renderer[] { lodMeshObj.GetComponent<MeshRenderer>() });

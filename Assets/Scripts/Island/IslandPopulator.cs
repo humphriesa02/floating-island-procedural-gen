@@ -56,8 +56,9 @@ public class IslandPopulator : MonoBehaviour
 						continue;
 					}
 					obj.transform.position = hit.point;
-					obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) *
-											Quaternion.Euler(0, Random.Range(0, 360), 0);
+					//obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, hit.normal) *
+					//						Quaternion.Euler(0, Random.Range(0, 360), 0);
+					obj.transform.rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
 				}
 				else
 				{
