@@ -29,7 +29,7 @@ public class IslandVisualizer : MonoBehaviour
 
         for (int i = 0; i < blendedColors.Length; i++)
         {
-            blendedColors[i] = Color.Lerp(originalColors[i], tint, 0.5f); // Blend 50% with stat tint
+            blendedColors[i] = Color.Lerp(originalColors[i], tint, 0.75f); // Blend 50% with stat tint
         }
 
         mesh.colors = blendedColors;
@@ -37,24 +37,21 @@ public class IslandVisualizer : MonoBehaviour
 
     private Color GetTintColor(IslandStats stats)
     {
-        float intensity;
-        switch (stats.Affinity)
-        {
-            case "Food":
-                intensity = Mathf.Clamp01(stats.Food / 10f);
-                return Color.Lerp(Color.gray, Color.green, intensity);
-            case "Danger":
-                intensity = Mathf.Clamp01(stats.Danger / 10f);
-                return Color.Lerp(Color.black, Color.red, intensity);
-            case "Defense":
-                intensity = Mathf.Clamp01(stats.Defense / 10f);
-                return Color.Lerp(Color.gray, Color.blue, intensity);
-            case "People":
-                intensity = Mathf.Clamp01(stats.People / 10f);
-                return Color.Lerp(Color.white, Color.yellow, intensity);
-            default:
-                return Color.white;
-        }
+        float total = stats.Food + stats.Danger + stats.Defense + stats.People;
+        if (total == 0) return Color.white;
+
+        float f = stats.Food / total;
+        float d = stats.Danger / total;
+        float def = stats.Defense / total;
+        float p = stats.People / total;
+
+        Color foodTint = Color.green;
+        Color dangerTint = Color.red;
+        Color defenseTint = Color.blue;
+        Color peopleTint = Color.yellow;
+
+        // Weighted blend
+        return foodTint * f + dangerTint * d + defenseTint * def + peopleTint * p;
     }
 
     private Material GetMaterialByAffinity(string affinity)

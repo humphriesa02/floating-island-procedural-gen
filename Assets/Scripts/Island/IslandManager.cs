@@ -104,15 +104,7 @@ public class IslandManager : MonoBehaviour
 
     void Start()
     {
-        Generate();
-        Build();
-        Populate();
-        islandStats.ResolveConflicts();
-        islandStats.CalculateAffinity();
-        Morph();
-        islandVisualizer.ApplyVisuals(islandStats, meshResult.Mesh, meshRenderer);
-
-        gameObject.isStatic = true;
+        CreateIsland("None");
     }
 
     public float GetRadius(){
@@ -147,6 +139,18 @@ public class IslandManager : MonoBehaviour
 		ClearIsland();
 	}
 
+
+    public void CreateIsland(string affinity = "None"){
+        Generate();
+        Build();
+        Populate(affinity);
+        islandStats.ResolveConflicts();
+        islandStats.CalculateAffinity();
+        Morph();
+        islandVisualizer.ApplyVisuals(islandStats, meshResult.Mesh, meshRenderer);
+
+        gameObject.isStatic = true;
+    }
 
     public void Generate(){
         float yPos = Random.Range(0.5f, 0.9f);
@@ -191,7 +195,7 @@ public class IslandManager : MonoBehaviour
         islandMorpher.DrawMorphDebugGizmos(transform, meshFilter.sharedMesh);
 	}
 
-	public void Populate(){
+	public void Populate(string affinity = "None"){
         if (possibleObjects.Length == 0) return;
         int objectsToSpawn = Random.Range(minObjectsToSpawn, maxObjectsToSpawn);
 
@@ -203,7 +207,8 @@ public class IslandManager : MonoBehaviour
             this.transform,
             maxAttempts,
             maxSlopeAngle,
-            maxDistanceFromCenter
+            maxDistanceFromCenter,
+            affinity
         );
         if (meshCollider == null) meshCollider = gameObject.AddComponent<MeshCollider>();
         meshCollider.enabled = true;

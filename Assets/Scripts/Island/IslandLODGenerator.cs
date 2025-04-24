@@ -1,4 +1,3 @@
-// --- IslandLODGenerator.cs ---
 using UnityEngine;
 
 public class IslandLODGenerator

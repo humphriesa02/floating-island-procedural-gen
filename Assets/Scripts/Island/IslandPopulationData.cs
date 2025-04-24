@@ -10,8 +10,9 @@ public class IslandPopulationData
     public float MaxSlopeAngle;
     public int MaxAttempts;
     public float MaxDistanceFromCenter;
+    public string IntendedAffinity;
 
-    public IslandPopulationData(GameObject[] possibleObjects, float minDist, float maxDist, int count, Transform parent, int maxAttempts, float maxSlopeAngle = 45f, float maxDistanceFromCenter = 0.2f)
+    public IslandPopulationData(GameObject[] possibleObjects, float minDist, float maxDist, int count, Transform parent, int maxAttempts, float maxSlopeAngle = 45f, float maxDistanceFromCenter = 0.2f, string affinity = "None")
     {
         if (possibleObjects == null || possibleObjects.Length == 0)
         {
@@ -27,5 +28,6 @@ public class IslandPopulationData
         MaxAttempts = maxAttempts;
         MaxSlopeAngle = maxSlopeAngle;
         MaxDistanceFromCenter = maxDistanceFromCenter;
+        IntendedAffinity = affinity;
     }
 }
