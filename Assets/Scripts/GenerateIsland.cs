@@ -70,7 +70,7 @@ public class GenerateIsland : MonoBehaviour
 		return IslandBaseHeight + IslandCrustHeight;
 	}
 
-    void Start()
+    void Awake()
     {
 		GenerateIslandMesh();
 		//PopulateIsland();
@@ -82,7 +82,7 @@ public class GenerateIsland : MonoBehaviour
 		IslandBaseHeight = Random.Range(islandBaseHeightMin, islandBaseHeightMax);
 		IslandCrustTopRadius = Random.Range(islandCrustTopRadiusMin, islandCrustTopRadiusMax);
 		IslandCrustHeight = Random.Range(islandCrustHeightMin, islandCrustHeightMax);
-		TotalIslandVertices = Random.Range(totalIslandVerticesMin, totalIslandVerticesMax);
+        TotalIslandVertices = Random.Range(totalIslandVerticesMin, totalIslandVerticesMax);
 		PerlinNoiseIntensity = Random.Range(perlinNoiseIntensityMin, perlinNoiseIntensityMax);
 		float yPos = Random.Range(0.5f, 0.9f);
 		InnerRingY = Mathf.Lerp(0, -IslandBaseHeight, yPos);
