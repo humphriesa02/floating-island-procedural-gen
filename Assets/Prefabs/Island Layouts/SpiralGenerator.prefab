@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2868358762100996115}
   - component: {fileID: 2244140109530076176}
+  - component: {fileID: 6906896624067316239}
   m_Layer: 0
   m_Name: SpiralGenerator
   m_TagString: Untagged
@@ -49,3 +50,20 @@ MonoBehaviour:
   numRepetitions: 1000
   angleStepCoilDegrees: 20
   angleEvelationAngle: 40
+--- !u!114 &6906896624067316239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1673356092878515202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 063fa0a498301f14cb183d1a6bc848b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layoutPrefabs: []
+  maxBranchDepth: 2
+  layoutsPerBranch: 3
+  branchSpacing: 20
+  branchScaleFactor: 0.8
