@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public abstract class SkyIslandLayout : MonoBehaviour
 {
@@ -110,4 +111,100 @@ public abstract class SkyIslandLayout : MonoBehaviour
         point.transform.localPosition = localOffset;
         point.transform.localRotation = Quaternion.identity;
     }
+
+    public void GradiantSeparation(int iterations = 20, float repulsionStrength = 1.0f, float boundaryRepulsion = 0.5f)
+    {
+
+        //Ensure there are islands to separate
+        if (skyIslands == null || skyIslands.Length == 0) return;
+
+        //For as many iterations as specified
+        for (int iter = 0; iter < iterations; iter++) {
+
+            Vector3[] adjustments = new Vector3[skyIslands.Length];
+
+            //iterate over the islands
+            for (int i = 0; i < skyIslands.Length; i++)
+            {
+
+                //Get and confirm Island
+                GameObject currIsland = skyIslands[i];
+                if(currIsland == null) continue;
+
+                //Get Island Data
+                Vector3 currPos = currIsland.transform.localPosition;
+                float currRadius = currIsland.GetComponent<GenerateIsland>().GetRadius();
+
+                Vector3 totalRepulsion = Vector3.zero;
+
+                //iterate over the islands again
+                for (int j = 0; j < skyIslands.Length; j++)
+                {
+
+                    //Get the other Island and Skip it if necessary
+                    GameObject otherIsland = skyIslands[j];
+                    if(i == j || otherIsland == null) continue ;
+
+                    //Get Data of Other Island
+                    Vector3 otherPos = otherIsland.transform.localPosition;
+                    float otherRadius = otherIsland.GetComponent<GenerateIsland>().GetRadius();
+
+                    //Calculate Distances
+                    Vector3 offset = currPos - otherPos;
+                    float distance = offset.magnitude;
+                    float minDistance = currRadius + otherRadius;
+
+                    //Calculate repulsion
+                    float safeDistance = Mathf.Max(distance, 0.001f);
+                    float repulsionValue = repulsionStrength / (safeDistance * safeDistance); //This is called an inverse square falloff
+                    totalRepulsion += offset.normalized * repulsionValue;
+
+                }
+
+                //Calculate Boundary repulsion
+                //X Axis
+                if (currPos.x - currRadius < -halfWidth)
+                {
+                    totalRepulsion.x += (-halfWidth - (currPos.x - currRadius)) * boundaryRepulsion;
+                }
+                else if (currPos.x + currRadius > halfWidth)
+                {
+                    totalRepulsion.x -= ((currPos.x + currRadius) - halfWidth) * boundaryRepulsion;
+                }
+
+                //Y Axis
+                if (currPos.y - currRadius < -halfHeight)
+                {
+                    totalRepulsion.y += (-halfHeight - (currPos.y - currRadius)) * boundaryRepulsion;
+                }
+                else if (currPos.y + currRadius > halfHeight)
+                {
+                    totalRepulsion.y -= ((currPos.y + currRadius) - halfHeight) * boundaryRepulsion;
+                }
+
+                //Z Axis
+                if (currPos.z - currRadius < -halfLength)
+                {
+                    totalRepulsion.z += (-halfLength - (currPos.z - currRadius)) * boundaryRepulsion;
+                }
+                else if (currPos.z + currRadius > halfLength)
+                {
+                    totalRepulsion.z -= ((currPos.z + currRadius) - halfLength) * boundaryRepulsion;
+                }
+
+                adjustments[i] = totalRepulsion;
+
+            }
+
+            //Apply Adjustments
+            for (int i = 0; i < skyIslands.Length; i++)
+            {
+                if (skyIslands[i] != null)
+                    skyIslands[i].transform.localPosition += adjustments[i];
+            }
+
+        }
+
+    }
+
 }
