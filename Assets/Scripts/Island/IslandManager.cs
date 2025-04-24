@@ -66,26 +66,40 @@ public class IslandManager : MonoBehaviour
     [Tooltip("The maximum slope angle for the objects to be placed on the island.")]
     [Range(0, 90)] [SerializeField] private float maxSlopeAngle = 45f; // Maximum slope angle for the objects to be placed on the island
 
+    [Header("Island LOD Settings")]
+    [SerializeField] private Material lodIslandMaterial;
+    [SerializeField] private float lod0Threshold = 1.0f;
+    [SerializeField] private float lod1Threshold = 0.5f;
+
     private readonly IslandMeshGenerator meshBuilder = new();
-    private readonly IslandPopulator islandPopulator = new();
+    private IslandPopulator islandPopulator;
     private readonly IslandStats islandStats = new();
     private readonly IslandMorpher islandMorpher = new();
+    private readonly IslandLODGenerator lodGenerator = new();
     private IslandVisualizer islandVisualizer;
     private IslandGenerationData generationData;
     private IslandMeshResult meshResult;
     private IslandPopulationData populationData;
 
     // Components
-    private MeshFilter meshFilter;
-    private MeshRenderer meshRenderer;
+    [Header("Components")]
+    [SerializeField] private MeshFilter meshFilter;
+    [SerializeField] private MeshRenderer meshRenderer;
 
     // Only use this for placing objects for now. Can be removed if too slow
     private MeshCollider meshCollider;
 
+    [SerializeField] private LODGroup lodGroup;
+
     private void Awake(){
-        meshFilter = GetComponent<MeshFilter>();
-        meshRenderer = GetComponent<MeshRenderer>();
+        if (meshFilter == null)  // Check if the MeshFilter is not already assigned
+            meshFilter = GetComponent<MeshFilter>();
+        if (meshRenderer == null)  // Check if the MeshRenderer is not already assigned
+            meshRenderer = GetComponent<MeshRenderer>();
+        islandPopulator = GetComponent<IslandPopulator>();
         islandVisualizer = GetComponent<IslandVisualizer>();
+        if (lodGroup == null)  // Check if the LODGroup is not already assigned
+            lodGroup = GetComponent<LODGroup>();
     }
 
     void Start()
@@ -155,7 +169,16 @@ public class IslandManager : MonoBehaviour
 
     public void Build(){
         meshResult = meshBuilder.Build(generationData);
-        meshFilter.mesh = meshResult.Mesh;
+        meshFilter.sharedMesh = meshResult.Mesh;
+
+        GameObject lodMeshObj = lodGenerator.GenerateLODIsland(generationData, lodIslandMaterial);
+        lodMeshObj.transform.SetParent(transform, false);
+
+        var lod0 = new LOD(lod0Threshold, new Renderer[] { meshRenderer });
+        var lod1 = new LOD(lod1Threshold, new Renderer[] { lodMeshObj.GetComponent<MeshRenderer>() });
+
+        lodGroup.SetLODs(new LOD[] { lod0, lod1 });
+        lodGroup.RecalculateBounds();
     }
     
 	void OnDrawGizmosSelected() {

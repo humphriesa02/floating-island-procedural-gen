@@ -11,8 +11,11 @@ GameObject:
   - component: {fileID: 1550416296652139840}
   - component: {fileID: 3060982003174009715}
   - component: {fileID: 4019316523036088256}
+  - component: {fileID: 7800013591414273633}
   - component: {fileID: 1523589594991586575}
   - component: {fileID: 2165628025761268239}
+  - component: {fileID: 2791767642417580008}
+  - component: {fileID: 4650493018868675431}
   m_Layer: 0
   m_Name: Island
   m_TagString: Untagged
@@ -88,6 +91,30 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!205 &7800013591414273633
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9210500063787357101}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 1
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.6
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.3
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers: []
+  m_Enabled: 1
 --- !u!114 &1523589594991586575
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,8 +137,8 @@ MonoBehaviour:
   islandBaseHeightMax: 10
   innerRingScaleMin: 0.2
   innerRingScaleMax: 0.6
-  totalIslandVerticesMin: 25
-  totalIslandVerticesMax: 40
+  totalIslandVerticesMin: 20
+  totalIslandVerticesMax: 35
   crustColor: {r: 0, g: 1, b: 0, a: 1}
   baseColor: {r: 0.58, g: 0.3, b: 0, a: 1}
   intermediateColor: {r: 1, g: 0.88, b: 0.75, a: 1}
@@ -135,6 +162,12 @@ MonoBehaviour:
   maxAttempts: 15
   maxDistanceFromCenter: 0.5
   maxSlopeAngle: 35
+  lodIslandMaterial: {fileID: 2100000, guid: e05729bf236d73b4fa367b2b0d0ed3bc, type: 2}
+  lod0Threshold: 0.4
+  lod1Threshold: 0.2
+  meshFilter: {fileID: 3060982003174009715}
+  meshRenderer: {fileID: 4019316523036088256}
+  lodGroup: {fileID: 7800013591414273633}
 --- !u!114 &2165628025761268239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -151,3 +184,28 @@ MonoBehaviour:
   dangerMat: {fileID: 2100000, guid: d3da625a0c3491d46b44de7fabf9b4c0, type: 2}
   defenseMat: {fileID: 2100000, guid: e2c0f6942bb1fd140b7e89fad81cb426, type: 2}
   peopleMat: {fileID: 2100000, guid: f5d6b6323e9aabc4e9bf3b5db3c520df, type: 2}
+--- !u!114 &2791767642417580008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9210500063787357101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cbd624e5777b59479763628ca4935b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4650493018868675431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9210500063787357101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 962ec2fdbe9c20d42853210eba35a7ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectRenderDistance: 100
