@@ -14,10 +14,17 @@ public class SkyIslandSpiralGenerator : MonoBehaviour
 
     private SkyIslandLayout prevLayout;
     private float accumulatedCoilAngle = 0.0f;
+    
+    private SkyIslandBranchGenerator branchGenerator;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        branchGenerator = gameObject.GetComponent<SkyIslandBranchGenerator>();
+        if (branchGenerator != null)
+        {
+            branchGenerator.setLayoutPrefabs(layoutPrefabs);
+        }
         GenerateSpiral();
     }
 
@@ -29,6 +36,9 @@ public class SkyIslandSpiralGenerator : MonoBehaviour
 
     private void GenerateSpiral()
     {
+
+        int layoutsSinceLastBranch = 0;
+        int nextBranchThreshold = Random.Range(10, 21);
 
         for (int i = 0; i < numRepetitions; i++)
         {
@@ -76,6 +86,23 @@ public class SkyIslandSpiralGenerator : MonoBehaviour
 
                 //Update previous layout
                 prevLayout = layout;
+
+                //Possibly Create Branch
+                layoutsSinceLastBranch++;
+                if (layoutsSinceLastBranch >= nextBranchThreshold)
+                {
+                    if (branchGenerator != null)
+                    {
+                        Vector3 branchStartPoint = layout.getLeftPoint().transform.position;
+                        Vector3 forward = layout.getLeftPoint().transform.position - layout.transform.position;
+                        Quaternion branchRotation = Quaternion.LookRotation(forward, Vector3.up);
+
+                        branchGenerator.GenerateBranch(branchStartPoint, branchRotation);
+                    }
+
+                    layoutsSinceLastBranch = 0;
+                    nextBranchThreshold = Random.Range(10, 20);
+                }
 
             }
 
