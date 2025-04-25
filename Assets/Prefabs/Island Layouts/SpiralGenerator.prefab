@@ -47,9 +47,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   layoutPrefabs:
   - {fileID: 8355968651658143384, guid: 161508c374592924ba05813f21c52870, type: 3}
-  numRepetitions: 1000
-  angleStepCoilDegrees: 20
-  angleEvelationAngle: 40
+  - {fileID: 8355968651658143384, guid: 654f5da3b55969246b66c6661a0b33f9, type: 3}
+  numRepetitions: 20
+  angleStepCoilDegreesMAX: 50
+  angleStepCoilDegreesMIN: 40
+  angleEvelationAngleMAX: 30
+  angleEvelationAngleMIN: 15
 --- !u!114 &6906896624067316239
 MonoBehaviour:
   m_ObjectHideFlags: 0

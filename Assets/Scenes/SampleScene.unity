@@ -360,12 +360,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
       propertyPath: numRepetitions
-      value: 100
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
       propertyPath: angleEvelationAngle
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
+      propertyPath: angleEvelationAngleMAX
+      value: 35
+      objectReference: {fileID: 0}
+    - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
+      propertyPath: angleEvelationAngleMIN
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
+      propertyPath: angleStepCoilDegreesMAX
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
+      propertyPath: angleStepCoilDegreesMIN
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
+      propertyPath: layoutPrefabs.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
+      propertyPath: 'layoutPrefabs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 8355968651658143384, guid: 654f5da3b55969246b66c6661a0b33f9, type: 3}
     - target: {fileID: 2868358762100996115, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
       propertyPath: m_LocalPosition.x
       value: 15.236482
