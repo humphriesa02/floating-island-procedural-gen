@@ -566,9 +566,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd0ce29c9438823478cbf882f73dbdc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  People: 5
+  People: 2
   Food: 8
-  Defense: 2
+  Defense: 0
   Danger: -8
 --- !u!1 &7539035881824257975
 GameObject:

@@ -58,10 +58,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd0ce29c9438823478cbf882f73dbdc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  People: 2
+  People: -2
   Food: 6
   Defense: 3
-  Danger: 3
+  Danger: 4
 --- !u!1001 &139076272727979381
 PrefabInstance:
   m_ObjectHideFlags: 0

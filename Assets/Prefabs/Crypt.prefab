@@ -101,7 +101,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   People: -2
   Food: -3
-  Defense: 5
+  Defense: 4
   Danger: 8
 --- !u!1001 &20800239639563301
 PrefabInstance:

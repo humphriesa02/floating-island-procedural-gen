@@ -531,10 +531,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd0ce29c9438823478cbf882f73dbdc0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  People: 4
-  Food: 7
-  Defense: 3
-  Danger: -3
+  People: 2
+  Food: 5
+  Defense: 4
+  Danger: -1
 --- !u!1 &7606377494031966156
 GameObject:
   m_ObjectHideFlags: 0

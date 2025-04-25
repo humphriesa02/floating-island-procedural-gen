@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 using static UnityEditor.PlayerSettings;
+using UnityEditor.Overlays;
 
 public class IslandLayoutB : SkyIslandLayout
 {
@@ -49,6 +50,7 @@ public class IslandLayoutB : SkyIslandLayout
             // Create a new empty GameObject at random positions within the layout bounds for spawn locations
             GameObject newSpawnLocation = new GameObject($"SpawnLocation_{i}");
             bool valid = false;
+            GameObject island = null; // Initialize tempIsland to null
             int iterationLimit = 100; // Prevent infinite loop in case of an error
             Vector3 pos = Vector3.zero;
 
@@ -60,32 +62,27 @@ public class IslandLayoutB : SkyIslandLayout
                 pos = new Vector3(xPos + transform.position.x, yPos + transform.position.y, zPos + transform.position.z);
 
                 GameObject tempIsland = Instantiate(islandStructure);
-                string newAffinity = DetermineNextAffinity(mostRecentAffinity);
-                tempIsland.GetComponent<IslandManager>().CreateIsland(newAffinity);
-                mostRecentAffinity = tempIsland.GetComponent<IslandManager>().GetAffinity();
-                UpdateAffinityCount(mostRecentAffinity, 1);
                 float currRad = tempIsland.GetComponent<IslandManager>().GetRadius();
                 float currHeight = tempIsland.GetComponent<IslandManager>().GetHeight();
-                Debug.Log($"Prefab Island Initialized: Radius={currRad}, Height={currHeight}");
 
                 valid = true;
 
+                //Check previous island positions
                 foreach (GameObject prevIsland in islands)
                 {
                     float prevRad = prevIsland.GetComponent<IslandManager>().GetRadius();
                     float prevHeight = prevIsland.GetComponent<IslandManager>().GetHeight();
-                    Debug.Log($"Previous Island: Radius={prevRad}, Height={prevHeight}");
 
                     float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, prevIsland.transform.position, prevRad, prevHeight);
-                    Debug.Log($"Closest Distance: {closestDistance}");
 
                     if (closestDistance <= 10.0f)
                     {
-                        Debug.Log($"Island {i} is too close to another island. Distance: {closestDistance}");
                         valid = false;
                         break;
                     }
                 }
+
+                //Check the previous layout island positions
                 if (valid && prevLayout != null)
                 {
                     foreach (GameObject prevIsland in prevLayout.SkyIslands)
@@ -102,6 +99,7 @@ public class IslandLayoutB : SkyIslandLayout
                     }
                 }
 
+                //Check the next layout island positions
                 if (valid && nextLayout != null)
                 {
                     foreach (GameObject nextIsland in nextLayout.SkyIslands)
@@ -117,29 +115,32 @@ public class IslandLayoutB : SkyIslandLayout
                         }
                     }
                 }
-
+                Destroy(tempIsland);
                 iterationLimit--;
-                if (iterationLimit <= 0)
-                {
-                    Debug.LogWarning($"Failed to find a valid position for island {i}.");
-                    Destroy(newSpawnLocation);
-                    continue;
-                }
-                if (valid)
-                {
-                    tempIsland.transform.parent = newSpawnLocation.transform;
-                    tempIsland.transform.Rotate(0, Random.Range(0, 360), 0);
-                    islands.Add(tempIsland);
-                    newSpawnLocation.transform.position = pos;
-                }
-                else
-                {
-                    Destroy(tempIsland);
-                    Destroy(newSpawnLocation);
-                }
+            }
+            if (valid)
+            {
+                island = Instantiate(islandStructure);
+
+                string newAffinity = DetermineNextAffinity(mostRecentAffinity);
+                island.GetComponent<IslandManager>().CreateIsland(newAffinity);
+                mostRecentAffinity = island.GetComponent<IslandManager>().GetAffinity();
+                UpdateAffinityCount(mostRecentAffinity, 1);
+
+                island.transform.parent = newSpawnLocation.transform;
+                island.transform.Rotate(0, Random.Range(0, 360), 0);
+                islands.Add(island);
+                newSpawnLocation.transform.position = pos;
+            }
+            else
+            {
+                Destroy(newSpawnLocation);
             }
         }
         skyIslands = islands.ToArray();
+
+        string layoutAffinity = GetDominantAffinity();
+        this.SetParticleEffect(layoutAffinity);
     }
 
     private void UpdateAffinityCount(string affinity, int count)
@@ -248,5 +249,15 @@ public class IslandLayoutB : SkyIslandLayout
         }
 
         return "Food";
+    }
+
+    public string GetDominantAffinity()
+    {
+        float max = Mathf.Max(numFood, numPeople, numDefense, numDanger);
+
+        if (Mathf.Approximately(max, numFood)) return "Food";
+        if (Mathf.Approximately(max, numPeople)) return "People";
+        if (Mathf.Approximately(max, numDefense)) return "Defense";
+        return "Danger";
     }
 }
