@@ -9,8 +9,13 @@ public class SkyIslandSpiralGenerator : MonoBehaviour
 
     [Header("Spiral Settings")]
     [SerializeField] private int numRepetitions = 10;
-    [SerializeField] private float angleStepCoilDegrees = 45f;
-    [SerializeField] private float angleEvelationAngle = 22.5f;
+    [SerializeField] private float angleStepCoilDegreesMAX = 50f;
+    [SerializeField] private float angleStepCoilDegreesMIN = 40f;
+    [SerializeField] private float angleEvelationAngleMAX = 30f;
+    [SerializeField] private float angleEvelationAngleMIN = 15f;
+
+    private float angleStepCoilDegrees = 0.0f;
+    private float angleEvelationAngle = 0.0f;
 
     private SkyIslandLayout prevLayout;
     private float accumulatedCoilAngle = 0.0f;
@@ -20,6 +25,10 @@ public class SkyIslandSpiralGenerator : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //Determine Randomness in Range
+        angleStepCoilDegrees = Random.Range(angleStepCoilDegreesMIN, angleStepCoilDegreesMAX);
+        angleEvelationAngle = Random.Range(angleEvelationAngleMIN, angleEvelationAngleMAX);
+
         branchGenerator = gameObject.GetComponent<SkyIslandBranchGenerator>();
         if (branchGenerator != null)
         {

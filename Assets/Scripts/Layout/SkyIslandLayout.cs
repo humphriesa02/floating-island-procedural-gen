@@ -22,6 +22,11 @@ public abstract class SkyIslandLayout : MonoBehaviour
 
     [Header("SkyIslands (Generated)")]
     [SerializeField, HideInInspector] protected GameObject[] skyIslands;
+
+    [Header("Particle Effects")]
+    [SerializeField] private GameObject[] particlePrefabs; // Size 4, set in Inspector
+    private GameObject activeParticles;
+
     public GameObject[] SkyIslands => skyIslands;
 
     /* The Center of the Layout */
@@ -219,6 +224,37 @@ public abstract class SkyIslandLayout : MonoBehaviour
             }
 
         }
+
+    }
+
+    public void SetParticleEffect(string affinity)
+    {
+        int index;
+        switch (affinity)
+        {
+            case "Food":
+                index = 1; break;
+            case "People":
+                index = 0; break;
+            case "Defense":
+                index = 2; break;
+            case "Danger":
+                index = 3; break;
+            default:
+                index = -1; break;
+        }
+
+        //Create Particles
+        GameObject particles = Instantiate(particlePrefabs[index], transform);
+        activeParticles = particles;
+
+        //Fit the particles to the layout
+        ParticleSystem ps = particles.GetComponent<ParticleSystem>();
+        var shape = ps.shape;
+        shape.shapeType = ParticleSystemShapeType.Box;
+        shape.scale = new Vector3(halfWidth * 2f, halfHeight * 2f, halfLength * 2f);
+
+        particles.transform.localPosition = Vector3.zero;
 
     }
 

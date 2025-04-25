@@ -180,6 +180,11 @@ MonoBehaviour:
   halfLength: 50
   halfHeight: 25
   skyIslands: []
+  particlePrefabs:
+  - {fileID: 3322287629543038328, guid: 37e84dc49492ec04682449516546cc07, type: 3}
+  - {fileID: 3322287629543038328, guid: a33333c6a6323f94a8efd32a268e53e1, type: 3}
+  - {fileID: 3322287629543038328, guid: f0aa893d6f26ca5459bfbfd0137565e3, type: 3}
+  - {fileID: 3322287629543038328, guid: f0de5423d22fdbb44b1dddb678ac9357, type: 3}
   islandStructure: {fileID: 9210500063787357101, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
   lowerBound: 2
   upperBound: 5

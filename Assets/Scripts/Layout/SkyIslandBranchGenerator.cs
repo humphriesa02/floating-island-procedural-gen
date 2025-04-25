@@ -70,8 +70,6 @@ public class SkyIslandBranchGenerator : MonoBehaviour
                 prevLayout.SetNextLayout(layout);
             }
 
-
-
             //Generat the Islands
             layout.GenerateIslands();
             layout.GradiantSeparation();
