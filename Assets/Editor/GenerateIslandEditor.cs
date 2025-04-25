@@ -29,6 +29,11 @@ public class IslandManagerEditor : Editor
             island.Populate();
         }
 
+        if (GUILayout.Button("Create Island"))
+        {
+            island.CreateIsland("None", true);
+        }
+
         if (GUILayout.Button("Clear Island"))
         {
             island.ClearIsland();

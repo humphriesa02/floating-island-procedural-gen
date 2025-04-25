@@ -165,9 +165,12 @@ MonoBehaviour:
   lodIslandMaterial: {fileID: 2100000, guid: e05729bf236d73b4fa367b2b0d0ed3bc, type: 2}
   lod0Threshold: 0.2
   lod1Threshold: 0.05
+  islandPopulator: {fileID: 2791767642417580008}
+  islandVisualizer: {fileID: 2165628025761268239}
   meshFilter: {fileID: 3060982003174009715}
   meshRenderer: {fileID: 4019316523036088256}
   lodGroup: {fileID: 7800013591414273633}
+  stepDelay: 0.1
 --- !u!114 &2165628025761268239
 MonoBehaviour:
   m_ObjectHideFlags: 0

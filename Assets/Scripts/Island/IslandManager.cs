@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System.Linq;
+using System.Collections;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class IslandManager : MonoBehaviour
@@ -72,11 +73,11 @@ public class IslandManager : MonoBehaviour
     [SerializeField] private float lod1Threshold = 0.5f;
 
     private readonly IslandMeshGenerator meshBuilder = new();
-    private IslandPopulator islandPopulator;
+    [SerializeField] private IslandPopulator islandPopulator;
     private readonly IslandStats islandStats = new();
     private readonly IslandMorpher islandMorpher = new();
     private readonly IslandLODGenerator lodGenerator = new();
-    private IslandVisualizer islandVisualizer;
+    [SerializeField] private IslandVisualizer islandVisualizer;
     private IslandGenerationData generationData;
     private IslandMeshResult meshResult;
     private IslandPopulationData populationData;
@@ -93,14 +94,19 @@ public class IslandManager : MonoBehaviour
 
     private MeshRenderer lodRenderer;
 
+    [Header("Debugging")]
+    [SerializeField] private float stepDelay = 0.1f; // Delay between steps in the coroutine for debugging
+
     private void Awake(){
-        if (meshFilter == null)  // Check if the MeshFilter is not already assigned
+        if (meshFilter == null)
             meshFilter = GetComponent<MeshFilter>();
-        if (meshRenderer == null)  // Check if the MeshRenderer is not already assigned
+        if (meshRenderer == null)
             meshRenderer = GetComponent<MeshRenderer>();
-        islandPopulator = GetComponent<IslandPopulator>();
-        islandVisualizer = GetComponent<IslandVisualizer>();
-        if (lodGroup == null)  // Check if the LODGroup is not already assigned
+        if (islandPopulator == null)
+            islandPopulator = GetComponent<IslandPopulator>();
+        if (islandVisualizer == null)
+            islandVisualizer = GetComponent<IslandVisualizer>();
+        if (lodGroup == null)
             lodGroup = GetComponent<LODGroup>();
     }
 
@@ -142,29 +148,37 @@ public class IslandManager : MonoBehaviour
 	}
 
 
-    public void CreateIsland(string affinity = "None"){
-        Generate(); // Generate mesh data
-        Build(); // Build the mesh and LODs
-        Populate(affinity); // Populate the island with objects
+    public void CreateIsland(string affinity = "None", bool debugMode = false){
 
-        // Simulation to find conflict and affinity
-        islandStats.ResolveConflicts();
-        islandStats.CalculateAffinity();
-
-        // Actually morph the island mesh based on the affinity
-        Morph();
-
-        // Apply the island stats to visually update the mesh and LODs
-        islandVisualizer.ApplyVisuals(islandStats, meshResult.Mesh, meshRenderer);
-
-        if (lodRenderer != null)
+        if (debugMode)
         {
-            islandVisualizer.ApplyLODTint(islandStats, lodRenderer.material);
+            Debug.Log("Debug mode enabled. Step by step generation started.");
+            StartCoroutine(StepByStepCoroutine(affinity, stepDelay)); // Step by step generation for debugging
         }
+        else{
+            Generate(); // Generate mesh data
+            Build(); // Build the mesh and LODs
+            Populate(affinity); // Populate the island with objects
 
-        lodGroup.RecalculateBounds(); // Recalculate the bounds of the LODGroup
-        // Set the object to be static for performance
-        gameObject.isStatic = true;
+            // Simulation to find conflict and affinity
+            islandStats.ResolveConflicts();
+            islandStats.CalculateAffinity();
+
+            // Actually morph the island mesh based on the affinity
+            Morph();
+
+            // Apply the island stats to visually update the mesh and LODs
+            islandVisualizer.ApplyVisuals(islandStats, meshResult.Mesh, meshRenderer);
+
+            if (lodRenderer != null)
+            {
+                islandVisualizer.ApplyLODTint(islandStats, lodRenderer.material);
+            }
+
+            lodGroup.RecalculateBounds(); // Recalculate the bounds of the LODGroup
+            // Set the object to be static for performance
+            gameObject.isStatic = true;
+        }
     }
 
     public void Generate(){
@@ -282,5 +296,72 @@ public class IslandManager : MonoBehaviour
         string json = JsonUtility.ToJson(saveData, true);
         File.WriteAllText(Path.Combine(Application.dataPath, path), json);
         Debug.Log("Island data saved to: " + path);
+    }
+
+    private IEnumerator StepByStepCoroutine(string affinity, float stepDelay)
+    {
+        Generate();
+        yield return new WaitForSeconds(stepDelay);
+
+        meshResult = new IslandMeshResult();
+        int ringSize = generationData.TotalIslandVertices + 1;
+        int coneTipIndex = 0, bottomCenterIndex = 0, topCapRingStart = 0, topCenterIndex = 0;
+
+        Vector3[] vertices = meshBuilder.GenerateIslandVertices(generationData, ringSize, ref coneTipIndex, ref bottomCenterIndex, ref topCapRingStart, ref topCenterIndex);
+        meshResult.Vertices = vertices;
+
+        var mesh = new Mesh();
+        mesh.name = "Island Mesh";
+        mesh.vertices = vertices;
+        meshFilter.sharedMesh = mesh;
+        yield return new WaitForSeconds(stepDelay);
+
+        int[] triangles = meshBuilder.GenerateIslandTriangles(generationData, ringSize, coneTipIndex, topCenterIndex, topCapRingStart);
+        int[] partialTriangles = new int[triangles.Length];
+        int chunkSize = 30; // draw 10 triangles per step
+        for (int i = 0; i < triangles.Length; i += chunkSize)
+        {
+            for (int j = 0; j < chunkSize && (i + j) < triangles.Length; j++)
+                partialTriangles[i + j] = triangles[i + j];
+
+            mesh.triangles = partialTriangles;
+            yield return new WaitForSeconds(stepDelay / 5f);
+        }
+        mesh.RecalculateNormals();
+        meshResult.Mesh = mesh;
+
+        Vector2[] uvs = meshBuilder.GenerateIslandUVs(generationData, vertices.Length, coneTipIndex, bottomCenterIndex, topCapRingStart, topCenterIndex);
+        mesh.uv = uvs;
+        yield return new WaitForSeconds(stepDelay);
+
+        Color[] colors = meshBuilder.GenerateIslandColors(generationData, ref vertices, ringSize, coneTipIndex, bottomCenterIndex, topCenterIndex);
+        mesh.colors = colors;
+        yield return new WaitForSeconds(stepDelay);
+
+        Populate(affinity);
+        yield return new WaitForSeconds(stepDelay);
+
+        islandStats.ResolveConflicts();
+        yield return new WaitForSeconds(stepDelay);
+
+        islandStats.CalculateAffinity();
+        yield return new WaitForSeconds(stepDelay);
+
+        islandMorpher.ApplyStatMorph(mesh, islandStats, meshResult.TopVertexIndices);
+        yield return new WaitForSeconds(stepDelay);
+
+        islandVisualizer.ApplyVisuals(islandStats, mesh, meshRenderer);
+        yield return new WaitForSeconds(stepDelay);
+
+        if (lodRenderer != null)
+        {
+            islandVisualizer.ApplyLODTint(islandStats, lodRenderer.material);
+            yield return new WaitForSeconds(stepDelay);
+        }
+
+        lodGroup.RecalculateBounds();
+        gameObject.isStatic = true;
+
+        Debug.Log("Island generation completed.");
     }
 }

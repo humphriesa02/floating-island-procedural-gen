@@ -58,7 +58,7 @@ public class IslandMeshGenerator
         return mesh;
 	}
 
-	Vector3[] GenerateIslandVertices(IslandGenerationData data, int ringSize, ref int coneTipIndex, ref int bottomCenterIndex, ref int topCapRingStart, ref int topCenterIndex){
+	public Vector3[] GenerateIslandVertices(IslandGenerationData data, int ringSize, ref int coneTipIndex, ref int bottomCenterIndex, ref int topCapRingStart, ref int topCenterIndex){
 		Vector3[] vertices = new Vector3[4 * ringSize + 3]; // 4 rings + cone tip + bottom center + top center
 		// Keep track of where we are in the vertices array
 		int vertIndex = 0;
@@ -102,7 +102,7 @@ public class IslandMeshGenerator
 		return vertIndex;
 	}
 
-	int[] GenerateIslandTriangles(IslandGenerationData data, int ringSize, int coneTipIndex, int topCenterIndex, int topCapRingStart){
+	public int[] GenerateIslandTriangles(IslandGenerationData data, int ringSize, int coneTipIndex, int topCenterIndex, int topCapRingStart){
 		int[] triangles = new int[data.TotalIslandVertices * 18];
 		// Keep track of where we are in the triangles array
 		int triIndex = 0;
@@ -151,7 +151,7 @@ public class IslandMeshGenerator
 		return triangles;
 	}
 
-	Vector2[] GenerateIslandUVs(IslandGenerationData data, int uvSize, int coneTipIndex, int bottomCenterIndex, int topCapRingStart, int topCenterIndex){
+	public Vector2[] GenerateIslandUVs(IslandGenerationData data, int uvSize, int coneTipIndex, int bottomCenterIndex, int topCapRingStart, int topCenterIndex){
 		Vector2[] uvs = new Vector2[uvSize];
     
 		int uvIndex = 0;
@@ -173,7 +173,7 @@ public class IslandMeshGenerator
 		return uvs;
 	}
 
-	Color[] GenerateIslandColors(IslandGenerationData data, ref Vector3[] vertices, int ringSize, int coneTipIndex, int bottomCenterIndex, int topCenterIndex){
+	public Color[] GenerateIslandColors(IslandGenerationData data, ref Vector3[] vertices, int ringSize, int coneTipIndex, int bottomCenterIndex, int topCenterIndex){
 		Color[] colors = new Color[vertices.Length];
 		for (int i = 0; i < ringSize; i++) {
 			float g = Mathf.PerlinNoise(vertices[i].x * 0.1f, vertices[i].z * 0.1f);

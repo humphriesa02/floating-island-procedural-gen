@@ -360,7 +360,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
       propertyPath: numRepetitions
-      value: 100
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 2244140109530076176, guid: 6e1cd3d0d21425f4181c815d901e2522, type: 3}
       propertyPath: angleEvelationAngle
