@@ -162,6 +162,7 @@ public class IslandManager : MonoBehaviour
             islandVisualizer.ApplyLODTint(islandStats, lodRenderer.material);
         }
 
+        lodGroup.RecalculateBounds(); // Recalculate the bounds of the LODGroup
         // Set the object to be static for performance
         gameObject.isStatic = true;
     }
@@ -196,8 +197,10 @@ public class IslandManager : MonoBehaviour
         var lod0 = new LOD(lod0Threshold, new Renderer[] { meshRenderer });
         var lod1 = new LOD(lod1Threshold, new Renderer[] { lodMeshObj.GetComponent<MeshRenderer>() });
 
-        lodGroup.SetLODs(new LOD[] { lod0, lod1 });
+        lodGroup.SetLODs(new LOD[] { lod0, lod1});   
         lodGroup.RecalculateBounds();
+        
+        lodMeshObj.isStatic = true; // Set the LOD object to be static for performance
     }
     
 	void OnDrawGizmosSelected() {

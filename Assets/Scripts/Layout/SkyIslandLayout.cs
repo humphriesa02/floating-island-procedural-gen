@@ -148,7 +148,7 @@ public abstract class SkyIslandLayout : MonoBehaviour
 
                 //Get Island Data
                 Vector3 currPos = currIsland.transform.localPosition;
-                float currRadius = currIsland.GetComponent<GenerateIsland>().GetRadius();
+                float currRadius = currIsland.GetComponent<IslandManager>().GetRadius();
 
                 Vector3 totalRepulsion = Vector3.zero;
 
@@ -162,7 +162,7 @@ public abstract class SkyIslandLayout : MonoBehaviour
 
                     //Get Data of Other Island
                     Vector3 otherPos = otherIsland.transform.localPosition;
-                    float otherRadius = otherIsland.GetComponent<GenerateIsland>().GetRadius();
+                    float otherRadius = otherIsland.GetComponent<IslandManager>().GetRadius();
 
                     //Calculate Distances
                     Vector3 offset = currPos - otherPos;

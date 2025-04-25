@@ -58,7 +58,6 @@ public class IslandVisualizer : MonoBehaviour
     {
         if (lodMaterial == null) return;
         Color tint = GetTintColor(stats);
-        Debug.Log($"Applying tint: {tint} to LOD material: {lodMaterial.name}");
         lodMaterial.color = tint;
     }
 

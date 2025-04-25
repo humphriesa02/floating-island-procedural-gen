@@ -15,7 +15,8 @@ public class IslandObjectCuller : MonoBehaviour
 
         foreach (Transform child in transform)
         {
-            child.gameObject.SetActive(shouldBeVisible);
+            if (child.GetComponent<Structure>() != null)
+                child.gameObject.SetActive(shouldBeVisible);
         }
     }
 }
