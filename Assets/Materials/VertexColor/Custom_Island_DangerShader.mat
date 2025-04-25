@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Custom_IslandShader
+  m_Name: Custom_Island_DangerShader
   m_Shader: {fileID: 4800000, guid: f9aac87d1227c1148805a8cb755df860, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -24,11 +24,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 71d4db963c9db284495b3bd82441303e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0ef73255621b50e47b545c53d4531ec2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 8b1ce4f0b58cdc14ebd3e4400ff3f798, type: 3}
+        m_Texture: {fileID: 2800000, guid: 879cc0243b124ab48bd623053cfdfd18, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []

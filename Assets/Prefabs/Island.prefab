@@ -1,129 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1510159257644698716
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 745939515834347979}
-  m_Layer: 0
-  m_Name: SpawnPoint1
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &745939515834347979
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1510159257644698716}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -11.129999, y: 2.18, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 3}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1550416296652139840}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &2611393625606270109
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8366517263882950078}
-  m_Layer: 0
-  m_Name: SpawnPoint2
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &8366517263882950078
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2611393625606270109}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 9.570001, y: 1.9399999, z: -2.25}
-  m_LocalScale: {x: 3, y: 3, z: 3}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1550416296652139840}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &7526970116364781458
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1077594620277952106}
-  m_Layer: 0
-  m_Name: SpawnPoint4
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1077594620277952106
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7526970116364781458}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 7.82, y: 4.2, z: -3.88}
-  m_LocalScale: {x: 3, y: 3, z: 3}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1550416296652139840}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &8672283413273802627
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2683013180536970297}
-  m_Layer: 0
-  m_Name: SpawnPoint3
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2683013180536970297
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8672283413273802627}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.76, y: 4.2, z: 10.19}
-  m_LocalScale: {x: 3, y: 3, z: 3}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1550416296652139840}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9210500063787357101
 GameObject:
   m_ObjectHideFlags: 0
@@ -135,7 +11,11 @@ GameObject:
   - component: {fileID: 1550416296652139840}
   - component: {fileID: 3060982003174009715}
   - component: {fileID: 4019316523036088256}
-  - component: {fileID: 7475170390806764330}
+  - component: {fileID: 7800013591414273633}
+  - component: {fileID: 1523589594991586575}
+  - component: {fileID: 2165628025761268239}
+  - component: {fileID: 2791767642417580008}
+  - component: {fileID: 4650493018868675431}
   m_Layer: 0
   m_Name: Island
   m_TagString: Untagged
@@ -155,11 +35,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 745939515834347979}
-  - {fileID: 8366517263882950078}
-  - {fileID: 2683013180536970297}
-  - {fileID: 1077594620277952106}
+  m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &3060982003174009715
@@ -215,7 +91,31 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &7475170390806764330
+--- !u!205 &7800013591414273633
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9210500063787357101}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 1
+  m_FadeMode: 0
+  m_AnimateCrossFading: 1
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.6
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.3
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.1
+    fadeTransitionWidth: 0
+    renderers: []
+  m_Enabled: 1
+--- !u!114 &1523589594991586575
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -224,34 +124,88 @@ MonoBehaviour:
   m_GameObject: {fileID: 9210500063787357101}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a9ce368d89a518e499d0be8d2254c78f, type: 3}
+  m_Script: {fileID: 11500000, guid: bb55fbb9647859f4ba118f11ad4c7343, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  islandCrustBottomRadiusMin: 10
+  islandCrustBottomRadiusMin: 5
   islandCrustBottomRadiusMax: 15
-  islandCrustTopRadiusMin: 15
-  islandCrustTopRadiusMax: 20
-  islandCrustHeightMin: 2
-  islandCrustHeightMax: 5
+  islandCrustTopRadiusMin: 5
+  islandCrustTopRadiusMax: 15
+  islandCrustHeightMin: 1
+  islandCrustHeightMax: 4
   islandBaseHeightMin: 5
-  islandBaseHeightMax: 20
+  islandBaseHeightMax: 10
   innerRingScaleMin: 0.2
   innerRingScaleMax: 0.6
-  totalIslandVerticesMin: 50
-  totalIslandVerticesMax: 100
+  totalIslandVerticesMin: 20
+  totalIslandVerticesMax: 35
   crustColor: {r: 0, g: 1, b: 0, a: 1}
-  baseColor: {r: 0.5882353, g: 0.29411766, b: 0, a: 1}
-  intermediateColor: {r: 1, g: 0.8784314, b: 0.7411765, a: 1}
-  bottomColor: {r: 0.7529412, g: 0.2509804, b: 0, a: 1}
-  perlinNoiseIntensityMin: 2
+  baseColor: {r: 0.58, g: 0.3, b: 0, a: 1}
+  intermediateColor: {r: 1, g: 0.88, b: 0.75, a: 1}
+  bottomColor: {r: 0.75, g: 0.25, b: 0, a: 1}
+  perlinNoiseIntensityMin: 1
   perlinNoiseIntensityMax: 4
   possibleObjects:
-  - {fileID: 5166926900218110477, guid: 110bd010be627264582946f7ebcafce4, type: 3}
-  - {fileID: 4778390221511688686, guid: d61642aa95675a34ca79ad6381788706, type: 3}
+  - {fileID: 5277420987186357094, guid: 5f76076c73b7f594ab45eec6e0359a40, type: 3}
   - {fileID: 4124756291820121072, guid: e4f7a2d3fdb09de4db4a2a4304a9ad9c, type: 3}
   - {fileID: 1841818965501092454, guid: c23bcf9593e54434680f4d401b0ee34d, type: 3}
-  spawnLocations:
-  - {fileID: 1510159257644698716}
-  - {fileID: 2611393625606270109}
-  - {fileID: 8672283413273802627}
-  - {fileID: 7526970116364781458}
+  - {fileID: 5166926900218110477, guid: 110bd010be627264582946f7ebcafce4, type: 3}
+  - {fileID: 4778390221511688686, guid: d61642aa95675a34ca79ad6381788706, type: 3}
+  - {fileID: 5063668477496027688, guid: d82e842d944aa0145bd9b6475ce07803, type: 3}
+  - {fileID: 555446009294837616, guid: ccabb5763ada3f14298031f4ff4f46bc, type: 3}
+  - {fileID: 7470841274745626124, guid: 6b99a8a48d49a6e48a48391e1034378f, type: 3}
+  - {fileID: 6483439602195329056, guid: 584d03317b6de784bb37411fcd892ad8, type: 3}
+  minDistanceBetweenObjects: 5
+  maxDistanceBetweenObjects: 12
+  minObjectsToSpawn: 10
+  maxObjectsToSpawn: 15
+  maxAttempts: 15
+  maxDistanceFromCenter: 0.5
+  maxSlopeAngle: 35
+  lodIslandMaterial: {fileID: 2100000, guid: e05729bf236d73b4fa367b2b0d0ed3bc, type: 2}
+  lod0Threshold: 0.2
+  lod1Threshold: 0.05
+  meshFilter: {fileID: 3060982003174009715}
+  meshRenderer: {fileID: 4019316523036088256}
+  lodGroup: {fileID: 7800013591414273633}
+--- !u!114 &2165628025761268239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9210500063787357101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8189c3bee238584ba1c1886c1c11c6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  foodMat: {fileID: 2100000, guid: 335789d3799f4de4d8c635e28e32c80e, type: 2}
+  dangerMat: {fileID: 2100000, guid: d3da625a0c3491d46b44de7fabf9b4c0, type: 2}
+  defenseMat: {fileID: 2100000, guid: e2c0f6942bb1fd140b7e89fad81cb426, type: 2}
+  peopleMat: {fileID: 2100000, guid: f5d6b6323e9aabc4e9bf3b5db3c520df, type: 2}
+--- !u!114 &2791767642417580008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9210500063787357101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cbd624e5777b59479763628ca4935b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4650493018868675431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9210500063787357101}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 962ec2fdbe9c20d42853210eba35a7ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectRenderDistance: 100
