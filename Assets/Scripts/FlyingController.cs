@@ -8,6 +8,12 @@ public class FlyingController : MonoBehaviour
     private float yaw = 0f;
     private float pitch = 0f;
 
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
     void Update()
     {
         // Mouse Look
@@ -31,6 +37,11 @@ public class FlyingController : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             moveSpeed /= 2; // reset speed on shift release
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit(); // quit the game
         }
 
         transform.Translate(direction * moveSpeed * Time.deltaTime, Space.Self);
