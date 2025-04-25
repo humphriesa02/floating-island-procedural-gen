@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 4562946301654061099}
   - component: {fileID: 2205392799616500412}
   m_Layer: 0
-  m_Name: IslandLayoutBPrefab
+  m_Name: IslandLayoutAPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -181,5 +181,5 @@ MonoBehaviour:
   halfHeight: 25
   skyIslands: []
   islandStructure: {fileID: 9210500063787357101, guid: 70e730fd2a80d2d48be0e7537e1974aa, type: 3}
-  lowerBound: 4
-  upperBound: 8
+  lowerBound: 8
+  upperBound: 16

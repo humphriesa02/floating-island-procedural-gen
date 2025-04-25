@@ -24,6 +24,15 @@ public class FlyingController : MonoBehaviour
             Input.GetAxis("Vertical")
         );
 
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            moveSpeed *= 2; // double speed on shift
+        }
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            moveSpeed /= 2; // reset speed on shift release
+        }
+
         transform.Translate(direction * moveSpeed * Time.deltaTime, Space.Self);
     }
 }

@@ -155,7 +155,7 @@ MonoBehaviour:
   - {fileID: 555446009294837616, guid: ccabb5763ada3f14298031f4ff4f46bc, type: 3}
   - {fileID: 7470841274745626124, guid: 6b99a8a48d49a6e48a48391e1034378f, type: 3}
   - {fileID: 6483439602195329056, guid: 584d03317b6de784bb37411fcd892ad8, type: 3}
-  minDistanceBetweenObjects: 8
+  minDistanceBetweenObjects: 5
   maxDistanceBetweenObjects: 12
   minObjectsToSpawn: 10
   maxObjectsToSpawn: 15

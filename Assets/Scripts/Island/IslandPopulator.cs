@@ -15,7 +15,7 @@ public class IslandPopulator : MonoBehaviour
 
 		for (int i = 0; i < objectsToSpawn; i++)
 		{
-			GameObject prefab = populationData.PossibleObjects[Random.Range(0, populationData.PossibleObjects.Length)];
+			GameObject prefab = SelectPrefabByAffinity(populationData);
 			float uniformScale = Random.Range(0.5f, 2.0f);
 			float distanceBetweenObjects = uniformScale * Random.Range(populationData.MinDistanceBetweenObjects, populationData.MaxDistanceBetweenObjects);
 
@@ -75,5 +75,42 @@ public class IslandPopulator : MonoBehaviour
 				break;
 			}
 		}
+	}
+
+	private GameObject SelectPrefabByAffinity(IslandPopulationData populationData)
+	{
+		var pool = new List<(GameObject prefab, float weight)>();
+
+		foreach (var prefab in populationData.PossibleObjects)
+		{
+			var structure = prefab.GetComponent<Structure>();
+			if (structure == null) continue;
+
+			float weight = 1f;
+
+			switch (populationData.IntendedAffinity)
+			{
+				case "Food": weight += structure.Food * 0.5f; break;
+				case "People": weight += structure.People * 0.5f; break;
+				case "Defense": weight += structure.Defense * 0.5f; break;
+				case "Danger": weight += structure.Danger * 0.5f; break;
+			}
+
+			pool.Add((prefab, weight));
+		}
+
+		float totalWeight = 0f;
+		foreach (var item in pool) totalWeight += item.weight;
+		float r = Random.value * totalWeight;
+
+		float cumulative = 0f;
+		foreach (var item in pool)
+		{
+			cumulative += item.weight;
+			if (r <= cumulative)
+				return item.prefab;
+		}
+
+		return populationData.PossibleObjects[Random.Range(0, populationData.PossibleObjects.Length)];
 	}
 }

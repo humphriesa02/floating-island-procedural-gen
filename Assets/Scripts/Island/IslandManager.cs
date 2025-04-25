@@ -106,7 +106,7 @@ public class IslandManager : MonoBehaviour
 
     void Start()
     {
-        CreateIsland("None");
+        //CreateIsland("None");
     }
 
     public float GetRadius(){
