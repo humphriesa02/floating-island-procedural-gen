@@ -8,11 +8,18 @@ public class IslandLayoutB : SkyIslandLayout
     [SerializeField] private GameObject islandStructure; // Prefabs to use for generating islands in this layout
     [SerializeField] private int lowerBound = 2;
     [SerializeField] private int upperBound = 5;
+        
+    private string mostRecentAffinity = "None";
+
+    private float numFood = 0;
+    private float numPeople = 0;
+    private float numDefense = 0;
+    private float numDanger = 0;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        GenerateIslands();
+        //GenerateIslands();
     }
 
     // Update is called once per frame
@@ -53,16 +60,20 @@ public class IslandLayoutB : SkyIslandLayout
                 pos = new Vector3(xPos + transform.position.x, yPos + transform.position.y, zPos + transform.position.z);
 
                 GameObject tempIsland = Instantiate(islandStructure);
-                float currRad = tempIsland.GetComponent<GenerateIsland>().GetRadius();
-                float currHeight = tempIsland.GetComponent<GenerateIsland>().GetHeight();
+                string newAffinity = DetermineNextAffinity(mostRecentAffinity);
+                tempIsland.GetComponent<IslandManager>().CreateIsland(newAffinity);
+                mostRecentAffinity = tempIsland.GetComponent<IslandManager>().GetAffinity();
+                UpdateAffinityCount(mostRecentAffinity, 1);
+                float currRad = tempIsland.GetComponent<IslandManager>().GetRadius();
+                float currHeight = tempIsland.GetComponent<IslandManager>().GetHeight();
                 Debug.Log($"Prefab Island Initialized: Radius={currRad}, Height={currHeight}");
 
                 valid = true;
 
                 foreach (GameObject prevIsland in islands)
                 {
-                    float prevRad = prevIsland.GetComponent<GenerateIsland>().GetRadius();
-                    float prevHeight = prevIsland.GetComponent<GenerateIsland>().GetHeight();
+                    float prevRad = prevIsland.GetComponent<IslandManager>().GetRadius();
+                    float prevHeight = prevIsland.GetComponent<IslandManager>().GetHeight();
                     Debug.Log($"Previous Island: Radius={prevRad}, Height={prevHeight}");
 
                     float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, prevIsland.transform.position, prevRad, prevHeight);
@@ -79,8 +90,8 @@ public class IslandLayoutB : SkyIslandLayout
                 {
                     foreach (GameObject prevIsland in prevLayout.SkyIslands)
                     {
-                        float prevRad = prevIsland.GetComponent<GenerateIsland>().GetRadius();
-                        float prevHeight = prevIsland.GetComponent<GenerateIsland>().GetHeight();
+                        float prevRad = prevIsland.GetComponent<IslandManager>().GetRadius();
+                        float prevHeight = prevIsland.GetComponent<IslandManager>().GetHeight();
 
                         float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, prevIsland.transform.position, prevRad, prevHeight);
                         if (closestDistance <= 10.0f)
@@ -95,8 +106,8 @@ public class IslandLayoutB : SkyIslandLayout
                 {
                     foreach (GameObject nextIsland in nextLayout.SkyIslands)
                     {
-                        float nextRad = nextIsland.GetComponent<GenerateIsland>().GetRadius();
-                        float nextHeight = nextIsland.GetComponent<GenerateIsland>().GetHeight();
+                        float nextRad = nextIsland.GetComponent<IslandManager>().GetRadius();
+                        float nextHeight = nextIsland.GetComponent<IslandManager>().GetHeight();
 
                         float closestDistance = CalculateClosestDistance(pos, currRad, currHeight, nextIsland.transform.position, nextRad, nextHeight);
                         if (closestDistance <= 10.0f)
@@ -131,6 +142,28 @@ public class IslandLayoutB : SkyIslandLayout
         skyIslands = islands.ToArray();
     }
 
+    private void UpdateAffinityCount(string affinity, int count)
+    {
+        switch (affinity)
+        {
+            case "Food":
+                numFood += count;
+                break;
+            case "People":
+                numPeople += count;
+                break;
+            case "Defense":
+                numDefense += count;
+                break;
+            case "Danger":
+                numDanger += count;
+                break;
+            default:
+                Debug.LogWarning($"Unknown affinity: {affinity}");
+                break;
+        }
+    }
+
     private float CalculateClosestDistance(Vector3 pos1, float radius1, float height1, Vector3 pos2, float radius2, float height2)
     {
         // Calculate horizontal distance in the XZ plane
@@ -146,57 +179,74 @@ public class IslandLayoutB : SkyIslandLayout
         return Mathf.Sqrt(horizontalDistance * horizontalDistance + verticalDistance * verticalDistance);
     }
 
-    public string ParseString(string str)
+    public string DetermineNextAffinity(string str)
     {
-        string rec = "None";
-        float fPercent = 25;
-        float pPercent = 50;
-        float dPercent = 75;
-        float danPercent = 100;
+        
+        // Weight accumulation
+        float totalWeight = 0.0f;
+        Dictionary<string, float> weights = new();
 
-        switch(str)
+        for (int i = 0; i < 4; i++)
         {
+            if (i == 0){
+                // Food
+                float weight = 1f / (1f + numFood);
+                weights["Food"] = weight;
+                totalWeight += weight;
+            }
+            else if (i == 1){
+                // People
+                float weight = 1f / (1f + numPeople);
+                weights["People"] = weight;
+                totalWeight += weight;
+            }
+            else if (i == 2){
+                // Defense
+                float weight = 1f / (1f + numDefense);
+                weights["Defense"] = weight;
+                totalWeight += weight;
+            }
+            else if (i == 3){
+                // Danger
+                float weight = 1f / (1f + numDanger);
+                weights["Danger"] = weight;
+                totalWeight += weight;
+            }
+        }
+
+        switch (mostRecentAffinity){
             case "Food":
-                fPercent = 20;
-                pPercent = 60;
-                dPercent = 80;
+                weights["Defense"] *= 1.5f;
+                totalWeight += weights["Defense"];
                 break;
             case "People":
-                fPercent = 20;
-                pPercent = 40;
-                dPercent = 60;
-
+                weights["Danger"] *= 1.5f;
+                totalWeight += weights["Danger"];
                 break;
             case "Defense":
-                fPercent = 40;
-                pPercent = 60;
-                dPercent = 80;
+                weights["Food"] *= 1.5f;
+                totalWeight += weights["Food"];
                 break;
             case "Danger":
-                fPercent = 20;
-                pPercent = 40;
-                dPercent = 80;
+                weights["People"] *= 1.5f;
+                totalWeight += weights["People"];
                 break;
         }
 
-        float randPercent = Random.Range(0, 100);
-        if (randPercent <= fPercent)
+        // Weighted random select
+        
+        float randomVal = Random.Range(0, totalWeight);
+        float cumulativeWeight = 0.0f;
+        foreach (var kvp in weights)
         {
-            rec = "People";
-        }
-        else if (randPercent <= pPercent)
-        {
-            rec = "Danger";
-        }
-        else if (randPercent <= dPercent)
-        {
-            rec = "Food";
-        }
-        else if (randPercent <= danPercent)
-        {
-            rec = "Defense";
+            cumulativeWeight += kvp.Value;
+            if (randomVal < cumulativeWeight)
+            {
+                // Return the selected affinity
+                return kvp.Key;
+            }
         }
 
-            return rec;
+        return "Food";
     }
 }

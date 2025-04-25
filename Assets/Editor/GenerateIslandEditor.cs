@@ -1,27 +1,32 @@
 using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(GenerateIsland))]
-public class GenerateIslandEditor : Editor
+[CustomEditor(typeof(IslandManager))]
+public class IslandManagerEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         // Draw default fields first
         DrawDefaultInspector();
 
-        GenerateIsland island = (GenerateIsland)target;
+        IslandManager island = (IslandManager)target;
 
         GUILayout.Space(10);
         GUILayout.Label("Debug Tools", EditorStyles.boldLabel);
 
         if (GUILayout.Button("Generate Island Mesh"))
         {
-            island.GenerateIslandMesh();
+            island.Generate();
+        }
+
+        if (GUILayout.Button("Build Island Mesh"))
+        {
+            island.Build();
         }
 
         if (GUILayout.Button("Populate Island"))
         {
-            island.PopulateIsland();
+            island.Populate();
         }
 
         if (GUILayout.Button("Clear Island"))
