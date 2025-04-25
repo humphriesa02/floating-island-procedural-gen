@@ -1,20 +1,20 @@
 using UnityEngine;
 
-public class IslandGenerationData
+public struct IslandGenerationData
 {
-    public float IslandCrustBottomRadius { get; set; }
-	public float IslandBaseHeight { get; set; }
-	public float IslandCrustTopRadius { get; set; }
-	public float IslandCrustHeight { get; set; }
-	public int TotalIslandVertices { get; set; }
-	public float PerlinNoiseIntensity { get; set; }
-	public float InnerRingY { get; set; }
-	public float InnerRingScale { get; set; }
+    public float IslandCrustBottomRadius;
+	public float IslandBaseHeight;
+	public float IslandCrustTopRadius;
+	public float IslandCrustHeight;
+	public int TotalIslandVertices;
+	public float PerlinNoiseIntensity;
+	public float InnerRingY;
+	public float InnerRingScale;
 
-    public Color CrustColor { get; set; }
-	public Color BaseColor  { get; set; }
-	public Color IntermediateColor { get; set; }
-	public Color BottomColor { get; set; }
+    public Color CrustColor;
+	public Color BaseColor;
+	public Color IntermediateColor;
+	public Color BottomColor;
 
     public IslandGenerationData(
         float islandCrustBottomRadius, float islandBaseHeight, float islandCrustTopRadius,

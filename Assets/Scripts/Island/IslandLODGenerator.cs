@@ -4,24 +4,23 @@ public class IslandLODGenerator
 {
     public GameObject GenerateLODIsland(IslandGenerationData data, Material lodMaterial)
     {
-        GameObject lodIsland = new GameObject("Island_LOD1");
+        GameObject lodIsland = new GameObject("LOD1");
 
-        Mesh mesh = BuildLODCopyIsland(data);
+        Mesh mesh = GenerateSimplifiedMesh(data);
 
-        MeshFilter mf = lodIsland.AddComponent<MeshFilter>();
-        MeshRenderer mr = lodIsland.AddComponent<MeshRenderer>();
+        MeshFilter filter = lodIsland.AddComponent<MeshFilter>();
+        MeshRenderer renderer = lodIsland.AddComponent<MeshRenderer>();
 
-        mf.sharedMesh = mesh;
-        mr.sharedMaterial = lodMaterial;
+        filter.sharedMesh = mesh;
+        renderer.sharedMaterial = lodMaterial;
 
         return lodIsland;
     }
 
-    private Mesh BuildLODCopyIsland(IslandGenerationData data)
+    private Mesh GenerateSimplifiedMesh(IslandGenerationData data)
     {
-        int simplifyFactor = 2;
-        int verts = Mathf.Max(8, data.TotalIslandVertices / simplifyFactor);
-        int ringSize = verts + 1;
+        int reducedVerts = Mathf.Max(8, data.TotalIslandVertices / 2);
+        int ringSize = reducedVerts + 1;
 
         Vector3[] vertices = new Vector3[ringSize * 2 + 2];
         Vector2[] uvs = new Vector2[vertices.Length];
@@ -30,25 +29,8 @@ public class IslandLODGenerator
         float topY = data.IslandCrustHeight;
         float bottomY = 0f;
 
-        // Top ring
-        for (int i = 0; i <= verts; i++)
-        {
-            float angle = i * Mathf.PI * 2f / verts;
-            float x = Mathf.Cos(angle) * data.IslandCrustTopRadius;
-            float z = Mathf.Sin(angle) * data.IslandCrustTopRadius;
-            vertices[vertIndex] = new Vector3(x, topY, z);
-            uvs[vertIndex++] = new Vector2((Mathf.Cos(angle) + 1f) * 0.5f, (Mathf.Sin(angle) + 1f) * 0.5f);
-        }
-
-        // Bottom ring
-        for (int i = 0; i <= verts; i++)
-        {
-            float angle = i * Mathf.PI * 2f / verts;
-            float x = Mathf.Cos(angle) * data.IslandCrustBottomRadius;
-            float z = Mathf.Sin(angle) * data.IslandCrustBottomRadius;
-            vertices[vertIndex] = new Vector3(x, bottomY, z);
-            uvs[vertIndex++] = new Vector2((Mathf.Cos(angle) + 1f) * 0.5f, (Mathf.Sin(angle) + 1f) * 0.5f);
-        }
+        vertIndex = FillRing(vertices, uvs, vertIndex, reducedVerts, data.IslandCrustTopRadius, topY);
+        vertIndex = FillRing(vertices, uvs, vertIndex, reducedVerts, data.IslandCrustBottomRadius, bottomY);
 
         int bottomCenter = vertIndex;
         vertices[vertIndex] = new Vector3(0, bottomY, 0);
@@ -58,18 +40,42 @@ public class IslandLODGenerator
         vertices[vertIndex] = new Vector3(0, topY, 0);
         uvs[vertIndex++] = new Vector2(0.5f, 0.5f);
 
-        // --- Build triangles
-        int[] triangles = new int[verts * 12];
+        Mesh mesh = new Mesh();
+        mesh.name = "Island LOD Mesh";
+        mesh.vertices = vertices;
+        mesh.uv = uvs;
+        mesh.triangles = GenerateTriangles(reducedVerts, ringSize, bottomCenter, topCenter);
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+
+        return mesh;
+    }
+
+    private int FillRing(Vector3[] vertices, Vector2[] uvs, int startIndex, int segments, float radius, float y)
+    {
+        for (int i = 0; i <= segments; i++)
+        {
+            float angle = i * Mathf.PI * 2f / segments;
+            float x = Mathf.Cos(angle) * radius;
+            float z = Mathf.Sin(angle) * radius;
+            vertices[startIndex] = new Vector3(x, y, z);
+            uvs[startIndex++] = new Vector2((x / radius + 1f) * 0.5f, (z / radius + 1f) * 0.5f);
+        }
+        return startIndex;
+    }
+
+    private int[] GenerateTriangles(int segments, int ringSize, int bottomCenter, int topCenter)
+    {
+        int[] triangles = new int[segments * 12];
         int tri = 0;
 
-        for (int i = 0; i < verts; i++)
+        for (int i = 0; i < segments; i++)
         {
             int topA = i;
             int topB = i + 1;
             int bottomA = ringSize + i;
             int bottomB = ringSize + i + 1;
 
-            // Side quad (2 triangles)
             triangles[tri++] = topA;
             triangles[tri++] = bottomB;
             triangles[tri++] = bottomA;
@@ -78,28 +84,16 @@ public class IslandLODGenerator
             triangles[tri++] = topB;
             triangles[tri++] = bottomB;
 
-            // Bottom cap
             triangles[tri++] = bottomCenter;
             triangles[tri++] = ringSize + i + 1;
             triangles[tri++] = ringSize + i;
 
-            // Top cap
             triangles[tri++] = topCenter;
             triangles[tri++] = i;
             triangles[tri++] = i + 1;
         }
 
-        Mesh mesh = new Mesh();
-        mesh.name = "Island_LOD_Mesh";
-        mesh.vertices = vertices;
-        mesh.uv = uvs;
-        mesh.triangles = triangles;
-
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-        mesh.bounds.Expand(10f); // Ensure always rendered
-
-        return mesh;
+        return triangles;
     }
 
 }

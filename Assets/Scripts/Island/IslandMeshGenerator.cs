@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class IslandMeshResult
+public struct IslandMeshResult
 {
 	public Mesh Mesh;
 	public Vector3[] Vertices;

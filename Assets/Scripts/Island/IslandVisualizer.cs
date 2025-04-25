@@ -40,10 +40,10 @@ public class IslandVisualizer : MonoBehaviour
         float total = stats.Food + stats.Danger + stats.Defense + stats.People;
         if (total == 0) return Color.white;
 
-        float f = stats.Food / total;
-        float d = stats.Danger / total;
-        float def = stats.Defense / total;
-        float p = stats.People / total;
+        float food = stats.Food / total;
+        float danger = stats.Danger / total;
+        float defense = stats.Defense / total;
+        float people = stats.People / total;
 
         Color foodTint = Color.green;
         Color dangerTint = Color.red;
@@ -51,7 +51,7 @@ public class IslandVisualizer : MonoBehaviour
         Color peopleTint = Color.yellow;
 
         // Weighted blend
-        return foodTint * f + dangerTint * d + defenseTint * def + peopleTint * p;
+        return foodTint * food + dangerTint * danger + defenseTint * defense + peopleTint * people;
     }
 
     public void ApplyLODTint(IslandStats stats, Material lodMaterial)

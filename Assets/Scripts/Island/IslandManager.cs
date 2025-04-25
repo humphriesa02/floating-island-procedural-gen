@@ -1,6 +1,4 @@
 using UnityEngine;
-using System.IO;
-using System.Linq;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class IslandManager : MonoBehaviour
@@ -25,9 +23,9 @@ public class IslandManager : MonoBehaviour
 	[SerializeField] private float islandBaseHeightMax = 10f;
 	[Tooltip("Minimum size of the inner ring close to the cone tip.")]
 	[Header("Island Generation Inner Ring")]
-	[SerializeField] private float innerRingScaleMin = 0.2f; // Change this value to adjust the inner ring size.
+	[SerializeField] private float innerRingScaleMin = 0.2f;
 	[Tooltip("Maximum size of the inner ring close to the cone tip.")]
-	[SerializeField] private float innerRingScaleMax = 0.6f; // Change this value to adjust the inner ring size.
+	[SerializeField] private float innerRingScaleMax = 0.6f;
 	[Tooltip("Minimum number of vertices in the island mesh.")]
 	[Header("Island Generation Vertices")]
 	[SerializeField] private int totalIslandVerticesMin = 25;
@@ -44,33 +42,44 @@ public class IslandManager : MonoBehaviour
 	[SerializeField] private Color bottomColor = new Color(0.75f, 0.25f, 0f);
 	[Header("Island Generation Noise")]
 	[Tooltip("Minimum amount of randomness for the island vertices.")]
-	[SerializeField] private float perlinNoiseIntensityMin = 2.0f; // Amount of randomness to add to the island shape
+	[SerializeField] private float perlinNoiseIntensityMin = 2.0f;
 	[Tooltip("Maximum amount of randomness for the island vertices.")]
-	[SerializeField] private float perlinNoiseIntensityMax = 2.0f; // Amount of randomness to add to the island shape
+	[SerializeField] private float perlinNoiseIntensityMax = 2.0f;
 
     [Header("Island Population Settings")]
 	[Tooltip("The possible objects to be spawned on the island.")]
-    [SerializeField] private GameObject[] possibleObjects; // Objects that can be spawned on an island
+    [SerializeField] private GameObject[] possibleObjects;
 	[Tooltip("The minimum distance between objects on the island.")]
-	[SerializeField] private float minDistanceBetweenObjects = 2.0f; // Minimum distance between objects on the island
+	[SerializeField] private float minDistanceBetweenObjects = 2.0f;
 	[Tooltip("The maximum distance between objects on the island.")]
-	[SerializeField] private float maxDistanceBetweenObjects = 5.0f; // Minimum distance between objects on the island
+	[SerializeField] private float maxDistanceBetweenObjects = 5.0f;
 	[Tooltip("The minimum number of objects to spawn on the island.")]
-	[SerializeField] private int minObjectsToSpawn = 5; // Minimum number of objects to spawn on the island
+	[SerializeField] private int minObjectsToSpawn = 5;
 	[Tooltip("The maximum number of objects to spawn on the island.")]
-	[SerializeField] private int maxObjectsToSpawn = 10; // Maximum number of objects to spawn on the island
+	[SerializeField] private int maxObjectsToSpawn = 10;
     [Tooltip("Number of attempts at placing an object")]
     [SerializeField] private int maxAttempts = 15;
     [Tooltip("The maximum distance from the center of the island to spawn objects.")]
-    [SerializeField] private float maxDistanceFromCenter = 0.2f; // Maximum distance from the center of the island to spawn objects
+    [SerializeField] private float maxDistanceFromCenter = 0.2f;
     [Tooltip("The maximum slope angle for the objects to be placed on the island.")]
-    [Range(0, 90)] [SerializeField] private float maxSlopeAngle = 45f; // Maximum slope angle for the objects to be placed on the island
+    [Range(0, 90)] [SerializeField] private float maxSlopeAngle = 45f;
 
     [Header("Island LOD Settings")]
     [SerializeField] private Material lodIslandMaterial;
     [SerializeField] private float lod0Threshold = 1.0f;
     [SerializeField] private float lod1Threshold = 0.5f;
 
+    [Header("Components")]
+    [SerializeField] private MeshFilter meshFilter;
+    [SerializeField] private MeshRenderer meshRenderer;
+    // Only use this for placing objects for now. Can be removed if too slow
+    private MeshCollider meshCollider;
+
+    [SerializeField] private LODGroup lodGroup;
+
+    private MeshRenderer lodRenderer;
+
+    // Island Scripts
     private readonly IslandMeshGenerator meshBuilder = new();
     private IslandPopulator islandPopulator;
     private readonly IslandStats islandStats = new();
@@ -81,26 +90,14 @@ public class IslandManager : MonoBehaviour
     private IslandMeshResult meshResult;
     private IslandPopulationData populationData;
 
-    // Components
-    [Header("Components")]
-    [SerializeField] private MeshFilter meshFilter;
-    [SerializeField] private MeshRenderer meshRenderer;
-
-    // Only use this for placing objects for now. Can be removed if too slow
-    private MeshCollider meshCollider;
-
-    [SerializeField] private LODGroup lodGroup;
-
-    private MeshRenderer lodRenderer;
-
     private void Awake(){
-        if (meshFilter == null)  // Check if the MeshFilter is not already assigned
+        if (meshFilter == null)
             meshFilter = GetComponent<MeshFilter>();
-        if (meshRenderer == null)  // Check if the MeshRenderer is not already assigned
+        if (meshRenderer == null)
             meshRenderer = GetComponent<MeshRenderer>();
         islandPopulator = GetComponent<IslandPopulator>();
         islandVisualizer = GetComponent<IslandVisualizer>();
-        if (lodGroup == null)  // Check if the LODGroup is not already assigned
+        if (lodGroup == null)
             lodGroup = GetComponent<LODGroup>();
     }
 
@@ -110,13 +107,17 @@ public class IslandManager : MonoBehaviour
     }
 
     public float GetRadius(){
-        if (generationData == null) return 0f;
-		return Mathf.Max(generationData.IslandCrustBottomRadius, generationData.IslandCrustTopRadius);
-	}
+        if (generationData.IslandCrustBottomRadius != 0 && generationData.IslandCrustTopRadius != 0)
+            return Mathf.Max(generationData.IslandCrustBottomRadius, generationData.IslandCrustTopRadius);
+        else
+            return 0f;
+    }
 
 	public float GetHeight(){
-        if (generationData == null) return 0f;
-		return generationData.IslandBaseHeight + generationData.IslandCrustHeight;
+        if (generationData.IslandBaseHeight != 0 && generationData.IslandCrustHeight != 0)
+		    return generationData.IslandBaseHeight + generationData.IslandCrustHeight;
+        else
+            return 0f;
 	}
 
     public string GetAffinity() => islandStats == null ? "None" : islandStats.Affinity;
@@ -190,6 +191,10 @@ public class IslandManager : MonoBehaviour
         meshResult = meshBuilder.Build(generationData);
         meshFilter.sharedMesh = meshResult.Mesh;
 
+        SetUpLOD();
+    }
+
+    private void SetUpLOD(){
         GameObject lodMeshObj = lodGenerator.GenerateLODIsland(generationData, lodIslandMaterial);
         lodMeshObj.transform.SetParent(transform, false);
         lodRenderer = lodMeshObj.GetComponent<MeshRenderer>();
@@ -200,19 +205,9 @@ public class IslandManager : MonoBehaviour
         lodGroup.SetLODs(new LOD[] { lod0, lod1});   
         lodGroup.RecalculateBounds();
         
-        lodMeshObj.isStatic = true; // Set the LOD object to be static for performance
+        lodMeshObj.isStatic = true;
     }
     
-	void OnDrawGizmosSelected() {
-		var mesh = meshFilter.sharedMesh;
-		if (!mesh) return;
-		Gizmos.color = Color.yellow;
-		foreach (var v in mesh.vertices) {
-			Gizmos.DrawSphere(transform.TransformPoint(v), 0.1f);
-		}
-        islandMorpher.DrawMorphDebugGizmos(transform, meshFilter.sharedMesh);
-	}
-
 	public void Populate(string affinity = "None"){
         if (possibleObjects.Length == 0) return;
         int objectsToSpawn = Random.Range(minObjectsToSpawn, maxObjectsToSpawn);
@@ -236,15 +231,14 @@ public class IslandManager : MonoBehaviour
 
     public void Morph()
     {
-        if (meshResult?.Mesh != null && islandStats != null)
+        if (meshResult.Mesh != null && islandStats != null)
         {
             islandMorpher.ApplyStatMorph(meshResult.Mesh, islandStats, meshResult.TopVertexIndices);
         }
     }
 
 	public void ClearIsland(){
-		var mesh = meshFilter.sharedMesh;
-		if (mesh) DestroyImmediate(mesh);
+		if (meshFilter.sharedMesh != null) DestroyImmediate(meshFilter.sharedMesh);
 		meshFilter.mesh = null;
 		for (int i = transform.childCount - 1; i >= 0; i--)
 		{
@@ -252,35 +246,13 @@ public class IslandManager : MonoBehaviour
 		}
 	}
 
-    public void SaveToJSON(string path = "island_save.json")
-    {
-        var saveData = new {
-            generation = new {
-                crustBottomRadius = generationData.IslandCrustBottomRadius,
-                baseHeight = generationData.IslandBaseHeight,
-                crustTopRadius = generationData.IslandCrustTopRadius,
-                crustHeight = generationData.IslandCrustHeight,
-                vertices = generationData.TotalIslandVertices,
-                noise = generationData.PerlinNoiseIntensity,
-                innerRingY = generationData.InnerRingY,
-                innerRingScale = generationData.InnerRingScale,
-                colors = new {
-                    crust = generationData.CrustColor,
-                    baseCol = generationData.BaseColor,
-                    intermediate = generationData.IntermediateColor,
-                    bottom = generationData.BottomColor
-                }
-            },
-            population = new {
-                objectsToSpawn = populationData.ObjectsToSpawn,
-                minDistance = populationData.MinDistanceBetweenObjects,
-                maxDistance = populationData.MaxDistanceBetweenObjects,
-                objectNames = populationData.PossibleObjects.Select(o => o != null ? o.name : "null").ToList()
-            }
-        };
-
-        string json = JsonUtility.ToJson(saveData, true);
-        File.WriteAllText(Path.Combine(Application.dataPath, path), json);
-        Debug.Log("Island data saved to: " + path);
-    }
+    void OnDrawGizmosSelected() {
+		var mesh = meshFilter.sharedMesh;
+		if (!mesh) return;
+		Gizmos.color = Color.yellow;
+		foreach (var v in mesh.vertices) {
+			Gizmos.DrawSphere(transform.TransformPoint(v), 0.1f);
+		}
+        islandMorpher.DrawMorphDebugGizmos(transform, meshFilter.sharedMesh);
+	}
 }
